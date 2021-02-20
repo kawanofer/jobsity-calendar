@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { isEmpty } from "lodash";
+import { isEmpty, filter, truncate } from "lodash";
+import { toast } from "react-toastify";
 
-import { Container, Calendar, WeekDays, Days } from "./styles";
+import Tooltip from "@material-ui/core/Tooltip";
+
+import { Container, Calendar, WeekDays, Days, Box, Event } from "./styles";
 
 import Modal from "../../components/Modal";
 
 export default function PageCalendar() {
-	const [open, setOpen] = useState(true);
+	const [eventsData, setEventsData] = useState([]);
+	const [open, setOpen] = useState(false);
 	const [calendarDays, setCalendarDays] = useState([]);
-	const [today, setToday] = useState(moment().format("DD"));
+	const [today, setToday] = useState(moment().format("L"));
 	const [firstWeekDayOfMonth, setFirstWeekDayOfMonth] = useState(
 		moment(moment().clone().startOf("month").format("L")).day()
 	);
@@ -19,17 +23,28 @@ export default function PageCalendar() {
 	);
 	//
 	useEffect(() => {
-		console.log(moment());
-		console.log("-");
-		//
-		console.log("today: ", today);
-		console.log("first Weekday Of Month: ", firstWeekDayOfMonth);
-		console.log("locale: ", locale);
-		console.log("end Of Month: ", endOfMonth);
-		//
-		console.log("-----------------------");
-		GenerateCalendar();
+		GetEventsDataFromStorage();
+		// console.log(moment());
+		// console.log("-");
+		// //
+		// console.log("first Weekday Of Month: ", firstWeekDayOfMonth);
+		// console.log("locale: ", locale);
+		// console.log("end Of Month: ", endOfMonth);
+		// //
+		// console.log("-----------------------");
 	}, []);
+	//
+	useEffect(() => {
+		GenerateCalendar();
+	}, [eventsData]);
+	//
+	const GetEventsDataFromStorage = () => {
+		const values = JSON.parse(
+			window.localStorage.getItem("jobsityCalendar")
+		);
+		console.log(values);
+		setEventsData(values ?? []);
+	};
 	//
 	const GenerateCalendar = () => {
 		const days = [];
@@ -41,27 +56,52 @@ export default function PageCalendar() {
 		// GET DAYS OF PREVIOUS MONTH, IF NEED.
 		const start = Number(lastDayofPreviousMonth) - firstWeekDayOfMonth;
 		for (let a = start; a < lastDayofPreviousMonth; a++) {
-			days.push({ color: "#aaa", day: a + 1 });
+			const prevMonth = moment()
+				.subtract(1, "months")
+				.set("date", a + 1);
+			days.push({
+				type: "prev",
+				day: prevMonth.get("date"),
+				date: prevMonth.format("L"),
+				events: filter(eventsData, ["date", prevMonth.format("L")]),
+			});
 		}
 		//
 		// GET DAYS OF CURRENT MONTH.
 		for (let a = 1; a <= endOfMonth; a++) {
-			days.push({ color: "#4d3755", day: a });
+			const currentMonth = moment().set("date", a);
+			days.push({
+				type: "current",
+				day: currentMonth.get("date"),
+				date: currentMonth.format("L"),
+				events: filter(eventsData, ["date", currentMonth.format("L")]),
+			});
 		}
 		//
 		// INCREMENT REST OF CALENDAR
 		const daysLength = days.length;
 		if (daysLength > 21 && daysLength < 28) {
 			for (let a = 1; a <= 28 - daysLength; a++) {
-				days.push({ color: "#4d3755", day: a });
+				const nextMonth = moment().add(1, "months").set("date", a);
+				days.push({
+					type: "next",
+					day: nextMonth.get("date"),
+					date: nextMonth.format("L"),
+					events: filter(eventsData, ["date", nextMonth.format("L")]),
+				});
 			}
 		}
 		if (daysLength > 28 && daysLength < 35) {
 			for (let a = 1; a <= 35 - daysLength; a++) {
-				days.push({ color: "#aaa", day: a });
+				const nextMonth = moment().add(1, "months").set("date", a);
+				days.push({
+					type: "next",
+					day: nextMonth.get("date"),
+					date: nextMonth.format("L"),
+					events: filter(eventsData, ["date", nextMonth.format("L")]),
+				});
 			}
 		}
-
 		setCalendarDays(days);
 	};
 	//
@@ -89,24 +129,70 @@ export default function PageCalendar() {
 
 					<Days>
 						{!isEmpty(calendarDays) &&
-							calendarDays.map((item) => {
+							calendarDays.map((item, index) => {
 								return (
-									<div
-										className="cell"
-										style={{ color: item.color }}
-										key={Math.random()}
-										onClick={() => handleEvent(item)}
+									<Tooltip
+										title={
+											item.events.length < 5
+												? `Total events: ${item.events.length}`
+												: `Click to see all events`
+										}
+										arrow
+										placement="top"
 									>
-										{item.day}
-									</div>
+										<Box
+											key={item.date}
+											type={item.type}
+											index={index}
+											today={today}
+											date={item.date}
+											onClick={() => handleEvent(item)}
+										>
+											<div>
+												{item.day}
+												{!isEmpty(item.events) &&
+													item.events.map((event) => {
+														return (
+															<Tooltip
+																title={
+																	event.title
+																}
+																arrow
+																placement="right"
+															>
+																<Event
+																	key={Math.random()}
+																	color={
+																		event.color
+																	}
+																	title={
+																		event.title
+																	}
+																>
+																	{truncate(
+																		event.title,
+																		{
+																			length: 20
+																		}
+																	)}
+																</Event>
+															</Tooltip>
+														);
+													})}
+											</div>
+										</Box>
+									</Tooltip>
 								);
 							})}
 					</Days>
 				</>
-				<Modal open={open} setOpen={setOpen} />
 			</Calendar>
-
-
+			<Modal
+				open={open}
+				setOpen={setOpen}
+				eventsData={eventsData}
+				setEventsData={setEventsData}
+			/>
 		</Container>
 	);
 }

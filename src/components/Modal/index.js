@@ -1,40 +1,124 @@
 import React, { useEffect, useState, useMemo, useContext } from "react";
+import moment from "moment";
+import * as Yup from "yup";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { toUpper, snakeCase, isString, forEach, orderBy } from "lodash";
-import * as moment from "moment";
 //
 import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
-	DialogActions,
 	Grid,
 	Button,
+	TextField,
+	Select,
+	MenuItem,
+	FormHelperText,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
 
 import * as Styles from "./styles";
 
-function Modal({ open, setOpen }) {
+export default function Modal({ open, setOpen, eventsData, setEventsData }) {
+	const [colors, setColors] = useState([
+		{ name: "Turquoise", hex: "#1abc9c" },
+		{ name: "Orange", hex: "#f39c12" },
+		{ name: "Amethyst", hex: "#9b59b6" },
+		{ name: "Alizarin", hex: "#e74c3c" },
+		{ name: "Wet Asphalt", hex: "#34495e" },
+	]);
+	//
+	const schema = Yup.object().shape({
+		fieldTitle: Yup.string()
+			.max(30, "max char of 30")
+			.required(" required")
+			.typeError(" required"),
+		fieldDate: Yup.date().required(" required").typeError(" required"),
+		fieldTime: Yup.string().required().typeError(" required"),
+		fieldCity: Yup.string().required(" required").typeError(" required"),
+		fieldColor: Yup.string(),
+	});
+	const {
+		register,
+		control,
+		handleSubmit,
+		watch,
+		errors,
+		setValue,
+		reset,
+	} = useForm({
+		defaultValues: {
+			fieldTitle: "",
+			fieldDate: null,
+			fieldTime: "",
+			fieldCity: "",
+			fieldColor: "",
+		},
+		validationSchema: schema,
+	});
+	// console.log("errors: ", errors);
+	//
+	const onSubmit = (data, e) => {
+		const {
+			fieldTitle,
+			fieldDate,
+			fieldTime,
+			fieldCity,
+			fieldColor,
+		} = data;
+		console.log("SUBMIT");
+		console.log("fieldTitle: ", fieldTitle);
+		console.log("fieldDate: ", fieldDate);
+		console.log("fieldTime: ", fieldTime);
+		console.log("fieldCity: ", fieldCity);
+		console.log("fieldColor: ", fieldColor);
+		//
+		let events = eventsData;
+		const obj = {
+			title: fieldTitle,
+			date: moment(fieldDate).format("L"),
+			time: fieldTime,
+			city: fieldCity,
+			color: fieldColor,
+		};
+		events.push(obj);
+		setEventsData(events);
+		//
+		window.localStorage.setItem("jobsityCalendar", JSON.stringify(events));
+		toast.success("Event saved");
+		handleClear();
+	};
+	//
+	const handleClear = () => {
+		reset({
+			fieldTitle: "",
+			fieldDate: null,
+			fieldTime: "",
+			fieldCity: "",
+			fieldColor: "",
+		});
+		setOpen(false);
+	};
 	//
 	return (
 		<>
 			<Dialog
 				open={open}
 				fullWidth
-				maxWidth="lg"
-				onClose={setOpen(false)}
+				maxWidth="sm"
+				onClose={() => setOpen(false)}
 				aria-labelledby="dialog-title"
 				aria-describedby="dialog-description"
 			>
 				<DialogTitle id="alert-dialog-title" className="align-title">
 					<Grid container spacing={2}>
 						<Grid item md={10} xs={10}>
-							<Styles.TitleDialog>EVENT</Styles.TitleDialog>
+							New Event
 						</Grid>
 						<Grid item md={2} xs={2}>
 							<span
-								onClick={setOpen(false)}
+								onClick={() => setOpen(false)}
 								title="Fechar"
 								style={{
 									float: "right",
@@ -49,46 +133,130 @@ function Modal({ open, setOpen }) {
 					</Grid>
 				</DialogTitle>
 
-				<DialogContent>
-					<Styles.FormBox>
-						<Grid container spacing={1}>
-							<Grid item md={4} xs={12}>
-								<div className="formTitle">Usuário:</div>
+				<DialogContent dividers>
+					<Styles.Container>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<div className="formTitle">Title</div>
+									<TextField
+										fullWidth
+										id="fieldTitle"
+										name="fieldTitle"
+										label=""
+										type="text"
+										inputRef={register}
+										error={errors.fieldTitle}
+										helperText={
+											errors.fieldTitle &&
+											errors.fieldTitle.message
+										}
+									/>
+								</Grid>
+
+								<Grid item md={8} xs={12}>
+									<div className="formTitle">Date:</div>
+									<TextField
+										fullWidth
+										type="date"
+										id="fieldDate"
+										name="fieldDate"
+										label=""
+										inputRef={register}
+										error={errors.fieldDate}
+										helperText={
+											errors.fieldDate &&
+											errors.fieldDate.message
+										}
+									/>
+								</Grid>
+								<Grid item md={4} xs={12}>
+									<div className="formTitle">Hour:</div>
+									<TextField
+										fullWidth
+										type="time"
+										id="fieldTime"
+										name="fieldTime"
+										label=""
+										inputRef={register}
+										error={errors.fieldTime}
+										helperText={
+											errors.fieldTime &&
+											errors.fieldTime.message
+										}
+									/>
+								</Grid>
+
+								<Grid item md={6} xs={12}>
+									<div className="formTitle">City:</div>
+									<TextField
+										fullWidth
+										id="fieldCity"
+										name="fieldCity"
+										label=""
+										type="text"
+										inputRef={register}
+										error={errors.fieldCity}
+										helperText={
+											errors.fieldCity &&
+											errors.fieldCity.message
+										}
+									/>
+								</Grid>
+
+								<Grid item md={6} xs={12}>
+									<div className="formTitle">Color:</div>
+									<Controller
+										as={
+											<Select fullWidth>
+												<MenuItem value={null}>
+													Select Color
+												</MenuItem>
+												{colors.map((item, index) => [
+													<MenuItem
+														key={index}
+														value={item.hex}
+													>
+														{item.name}
+													</MenuItem>,
+												])}
+											</Select>
+										}
+										name="fieldColor"
+										control={control}
+										defaultValue=""
+									/>
+								</Grid>
 							</Grid>
 
-							<Grid item md={2} xs={12}>
-								<div className="formTitle">Nº da viagem:</div>
-							</Grid>
-
-							<Grid item md={2} xs={12}>
-								<div className="formTitle">
-									Nº da ordem elevação:
-								</div>
-							</Grid>
-
-							<Grid item md={2} xs={12}>
-								<div className="formTitle">
-									Data/hora inicio:
-								</div>
-							</Grid>
-
-							<Grid item md={2} xs={12}>
-								<div className="formTitle">Data/hora fim:</div>
-							</Grid>
-						</Grid>
-					</Styles.FormBox>
+							<div
+								style={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "flex-end",
+									margin: "16px 0",
+								}}
+							>
+								<Button
+									onClick={() => setOpen(false)}
+									variant="contained"
+									color="default"
+								>
+									Cancel
+								</Button>
+								<Button
+									style={{ marginLeft: "8px" }}
+									variant="contained"
+									color="primary"
+									type="submit"
+								>
+									Save
+								</Button>
+							</div>
+						</form>
+					</Styles.Container>
 				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setOpen(false)} color="default">
-						Cancel
-					</Button>
-					<Button autoFocus color="primary">
-						Save
-					</Button>
-				</DialogActions>
 			</Dialog>
 		</>
 	);
 }
-
-export default Modal;

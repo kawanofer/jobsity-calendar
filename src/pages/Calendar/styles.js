@@ -39,13 +39,13 @@ export const WeekDays = styled.div`
 	.cell {
 		align-items: center;
 		width: 150px;
-		background-color: #0984e3;
+		background-color: #2c3e50;
 		text-transform: capitalize;
 		letter-spacing: 1px;
 		text-align: center;
 		color: #fff;
 		padding: 8px;
-		margin: 0 1px;
+		border: 1px solid #fff;
 	}
 `;
 
@@ -53,17 +53,44 @@ export const Days = styled.div`
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+`;
 
-	.cell {
-		width: 150px;
-		height: 150px;
-		border: 1px solid #ccc;
+export const Box = styled.div`
+	width: 150px;
+	height: 150px;
+	cursor: pointer;
+	border: 1px solid #ccc;
 
-		padding: 8px;
-		margin: 1px;
-		color: #4d3755;
-		background-color: #fff;
+	padding: 8px;
+	/* margin: 1px; */
 
-		cursor: pointer;
-	}
+	color: ${({ type }) => (type === "current" ? "#2c3e50" : "#ccc")};
+
+	background-color: ${({ today, date, index }) => {
+		// console.log(index);
+		// if(index === 0 || ((index - 7) === 0))
+		// {
+		// 	console.log(index);
+		// }
+		return today === date ? "rgba(52, 152, 219, 0.7)" : "#fff";
+	}};
+`;
+// #95a5a6
+// #bdc3c7
+// #ecf0f1
+
+export const Event = styled.div`
+	display: flex;
+	flex-direction: column;
+
+	width: 100%;
+	height: 25px;
+
+	font-size: 12px;
+	border-radius: 3px;
+	margin: 1px 0;
+	padding: 4px 6px;
+
+	color: #fff;
+	background-color: ${({ color }) => color};
 `;
