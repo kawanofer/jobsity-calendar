@@ -3,7 +3,8 @@ import moment from "moment";
 import { isEmpty, filter, truncate } from "lodash";
 import { toast } from "react-toastify";
 
-import Tooltip from "@material-ui/core/Tooltip";
+import { Tooltip } from "@material-ui/core";
+import { Add, Visibility } from "@material-ui/icons";
 
 import { Container, Calendar, WeekDays, Days, Box, Event } from "./styles";
 
@@ -11,6 +12,7 @@ import Modal from "../../components/Modal";
 
 export default function PageCalendar() {
 	const [eventsData, setEventsData] = useState([]);
+	const [selectedData, setSelectedData] = useState([]);
 	const [open, setOpen] = useState(false);
 	const [calendarDays, setCalendarDays] = useState([]);
 	const [today, setToday] = useState(moment().format("L"));
@@ -42,11 +44,15 @@ export default function PageCalendar() {
 		const values = JSON.parse(
 			window.localStorage.getItem("jobsityCalendar")
 		);
-		console.log(values);
-		setEventsData(values ?? []);
+		setEventsData(
+			values.sort(
+				(a, b) => new Date(a.fullDate) - new Date(b.fullDate)
+			) ?? []
+		);
 	};
 	//
 	const GenerateCalendar = () => {
+		console.log("EVENTS DATA: ", eventsData);
 		const days = [];
 		const lastDayofPreviousMonth = moment()
 			.subtract(1, "months")
@@ -106,9 +112,19 @@ export default function PageCalendar() {
 	};
 	//
 	const handleEvent = (item) => {
-		console.log(item);
-		setOpen(true);
+		console.log("handleEvent: ", item);
+		setSelectedData(item);
 	};
+	//
+	useEffect(() => {
+		if (!isEmpty(selectedData)) {
+			setOpen(true);
+		}
+	}, [selectedData]);
+	//
+	useEffect(() => {
+		console.log("calendarDays: ", calendarDays);
+	}, [calendarDays]);
 	//
 	return (
 		<Container>
@@ -131,29 +147,48 @@ export default function PageCalendar() {
 						{!isEmpty(calendarDays) &&
 							calendarDays.map((item, index) => {
 								return (
-									<Tooltip
-										title={
-											item.events.length < 5
-												? `Total events: ${item.events.length}`
-												: `Click to see all events`
-										}
-										arrow
-										placement="top"
+									<Box
+										key={item.date}
+										type={item.type}
+										index={index}
+										today={today}
+										date={item.date}
 									>
-										<Box
-											key={item.date}
-											type={item.type}
-											index={index}
-											today={today}
-											date={item.date}
-											onClick={() => handleEvent(item)}
-										>
-											<div>
+										<div>
+											<div className="boxHeader">
 												{item.day}
+												{item.events.length > 5 && (
+													<Tooltip
+														title={`See all ${item.events.length} events`}
+														arrow
+														placement="right"
+													>
+														<Visibility
+															className="boxAddButton"
+															fontSize="small"
+														/>
+													</Tooltip>
+												)}
+												<Tooltip
+													title="Add new event"
+													arrow
+													placement="right"
+												>
+													<Add
+														className="boxAddButton"
+														fontSize="small"
+														onClick={() =>
+															handleEvent(item)
+														}
+													/>
+												</Tooltip>
+											</div>
+											<div className="boxBody">
 												{!isEmpty(item.events) &&
 													item.events.map((event) => {
 														return (
 															<Tooltip
+																key={Math.random()}
 																title={
 																	event.title
 																}
@@ -161,27 +196,31 @@ export default function PageCalendar() {
 																placement="right"
 															>
 																<Event
-																	key={Math.random()}
 																	color={
 																		event.color
 																	}
-																	title={
-																		event.title
+																	onClick={() =>
+																		handleEvent(
+																			event
+																		)
 																	}
 																>
-																	{truncate(
+																	{event.date}{" "}
+																	-{" "}
+																	{event.time}
+																	{/* {truncate(
 																		event.title,
 																		{
-																			length: 20
+																			length: 20,
 																		}
-																	)}
+																	)} */}
 																</Event>
 															</Tooltip>
 														);
 													})}
 											</div>
-										</Box>
-									</Tooltip>
+										</div>
+									</Box>
 								);
 							})}
 					</Days>
@@ -192,6 +231,9 @@ export default function PageCalendar() {
 				setOpen={setOpen}
 				eventsData={eventsData}
 				setEventsData={setEventsData}
+				selectedData={selectedData}
+				setSelectedData={setSelectedData}
+				GetEventsDataFromStorage={GetEventsDataFromStorage}
 			/>
 		</Container>
 	);

@@ -12,7 +12,7 @@ export default createGlobalStyle`
 
   body {
     background: #F5F5F5;
-    color: #9F9F9F;
+    color: #2c3e50;
     font-family: "Avenir Next Pro Regular", sans-serif;
     -webkit-font-smoothing: antialiased !important;
   }

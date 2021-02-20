@@ -58,9 +58,7 @@ export const Days = styled.div`
 export const Box = styled.div`
 	width: 150px;
 	height: 150px;
-	cursor: pointer;
 	border: 1px solid #ccc;
-
 	padding: 8px;
 	/* margin: 1px; */
 
@@ -74,6 +72,24 @@ export const Box = styled.div`
 		// }
 		return today === date ? "rgba(52, 152, 219, 0.7)" : "#fff";
 	}};
+
+	.boxHeader {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.boxBody {
+		overflow-y: auto;
+	}
+
+	.boxAddButton {
+		color: #2c3e50;
+		cursor: pointer;
+
+		:hover {
+			color: #7f8c8d;
+		}
+	}
 `;
 // #95a5a6
 // #bdc3c7
@@ -91,6 +107,7 @@ export const Event = styled.div`
 	margin: 1px 0;
 	padding: 4px 6px;
 
+	cursor: pointer;
 	color: #fff;
 	background-color: ${({ color }) => color};
 `;

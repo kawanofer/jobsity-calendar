@@ -3,7 +3,7 @@ import moment from "moment";
 import * as Yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-import { toUpper, snakeCase, isString, forEach, orderBy } from "lodash";
+import { isEmpty } from "lodash";
 //
 import {
 	Dialog,
@@ -20,7 +20,15 @@ import Close from "@material-ui/icons/Close";
 
 import * as Styles from "./styles";
 
-export default function Modal({ open, setOpen, eventsData, setEventsData }) {
+export default function Modal({
+	open,
+	setOpen,
+	eventsData,
+	setEventsData,
+	selectedData,
+	setSelectedData,
+	GetEventsDataFromStorage,
+}) {
 	const [colors, setColors] = useState([
 		{ name: "Turquoise", hex: "#1abc9c" },
 		{ name: "Orange", hex: "#f39c12" },
@@ -57,6 +65,14 @@ export default function Modal({ open, setOpen, eventsData, setEventsData }) {
 		},
 		validationSchema: schema,
 	});
+	//
+	useEffect(() => {
+		console.log("selectedData: ", selectedData);
+		if (!isEmpty(selectedData)) {
+			const date = moment(selectedData.date).format("DD/MM/YYYY");
+			setValue("fieldDate", date);
+		}
+	}, [selectedData]);
 	// console.log("errors: ", errors);
 	//
 	const onSubmit = (data, e) => {
@@ -67,17 +83,15 @@ export default function Modal({ open, setOpen, eventsData, setEventsData }) {
 			fieldCity,
 			fieldColor,
 		} = data;
-		console.log("SUBMIT");
-		console.log("fieldTitle: ", fieldTitle);
-		console.log("fieldDate: ", fieldDate);
-		console.log("fieldTime: ", fieldTime);
-		console.log("fieldCity: ", fieldCity);
-		console.log("fieldColor: ", fieldColor);
 		//
 		let events = eventsData;
 		const obj = {
 			title: fieldTitle,
 			date: moment(fieldDate).format("L"),
+			fullDate: moment(fieldDate)
+				.utc(false)
+				.set("hour", fieldTime.split(":")[0])
+				.set("minute", fieldTime.split(":")[1]),
 			time: fieldTime,
 			city: fieldCity,
 			color: fieldColor,
@@ -99,6 +113,9 @@ export default function Modal({ open, setOpen, eventsData, setEventsData }) {
 			fieldColor: "",
 		});
 		setOpen(false);
+		setSelectedData([]);
+		// Reload events
+		GetEventsDataFromStorage();
 	};
 	//
 	return (
@@ -114,7 +131,10 @@ export default function Modal({ open, setOpen, eventsData, setEventsData }) {
 				<DialogTitle id="alert-dialog-title" className="align-title">
 					<Grid container spacing={2}>
 						<Grid item md={10} xs={10}>
-							New Event
+							{!isEmpty(selectedData) &&
+							selectedData?.events?.length === 0
+								? "New Event"
+								: "Edit Event"}
 						</Grid>
 						<Grid item md={2} xs={2}>
 							<span
