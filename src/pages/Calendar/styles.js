@@ -90,9 +90,6 @@ export const Box = styled.div`
 		}
 	}
 `;
-// #95a5a6
-// #bdc3c7
-// #ecf0f1
 
 export const Reminder = styled.div`
 	display: flex;
@@ -108,5 +105,5 @@ export const Reminder = styled.div`
 
 	cursor: pointer;
 	color: #fff;
-	background-color: ${({ color }) => color};
+	background-color: ${({ color }) => (color ? color : "#aaa")};
 `;

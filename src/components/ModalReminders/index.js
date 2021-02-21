@@ -3,7 +3,7 @@ import moment from "moment";
 import * as Yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-import { isEmpty } from "lodash";
+import { remove, find, isEmpty } from "lodash";
 import * as uuid from "uuid";
 //
 import {
@@ -15,6 +15,7 @@ import {
 	TextField,
 	Select,
 	MenuItem,
+	FormHelperText,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
 
@@ -39,14 +40,13 @@ export default function Modal({
 	]);
 	//
 	const schema = Yup.object().shape({
-		fieldTitle: Yup.string()
-			.max(30, "max char of 30")
-			.required(" required")
-			.typeError(" required"),
-		fieldDate: Yup.date().required(" required").typeError(" required"),
-		fieldTime: Yup.string().required().typeError(" required"),
-		fieldCity: Yup.string().required(" required").typeError(" required"),
-		fieldColor: Yup.string(),
+		title: Yup.string()
+			.max(30, "limit of 30 chars")
+			.required("is required"),
+		date: Yup.date().required().typeError("is required"),
+		time: Yup.string().required("is required"),
+		city: Yup.string().required("is required"),
+		color: Yup.string(),
 	});
 	const {
 		register,
@@ -58,55 +58,57 @@ export default function Modal({
 		reset,
 	} = useForm({
 		defaultValues: {
-			fieldTitle: "",
-			fieldDate: null,
-			fieldTime: "",
-			fieldCity: "",
-			fieldColor: "",
+			title: "",
+			date: "",
+			time: "",
+			city: "",
+			color: "",
 		},
 		validationSchema: schema,
 	});
-	const values = useMemo(() => watch({ nest: true }), [watch]);
-	console.log("values: ", values);
 	//
 	useEffect(() => {
-		// if (!isEmpty(values.fieldCity)) {
-		// 	getWeather(values.fieldCity);
+		// if (!isEmpty(values.city)) {
+		// 	getWeather(values.city);
 		// }
-		getWeather("Curitiba");
+		//getWeather("Curitiba");
 	}, []);
 	//
 	useEffect(() => {
-		console.log("selectedData: ", selectedData);
-		if (!isEmpty(selectedData)) {
-			const date = moment(selectedData.date).format("DD/MM/YYYY");
-			setValue("fieldDate", date);
+		if (!isEmpty(selectedData) && open) {
+			setTimeout(() => {
+				setValue("title", selectedData?.title ?? "");
+				setValue("date", moment(selectedData.date).format().split("T")[0]);
+				setValue("time", selectedData?.time ?? "");
+				setValue("city", selectedData?.city ?? "");
+				setValue("color", selectedData?.color ?? "");
+			}, 500);
 		}
-	}, [selectedData]);
+	}, [selectedData, open]);
 	// console.log("errors: ", errors);
 	//
 	const onSubmit = (data, e) => {
-		const {
-			fieldTitle,
-			fieldDate,
-			fieldTime,
-			fieldCity,
-			fieldColor,
-		} = data;
+		const { title, date, time, city, color } = data;
 		//
 		let reminders = remindersData;
 		const obj = {
 			id: uuid.v4(),
-			title: fieldTitle,
-			date: moment(fieldDate).format("L"),
-			fullDate: moment(fieldDate)
+			title,
+			date: moment(date).format("L"),
+			fullDate: moment(date)
 				.utc(false)
-				.set("hour", fieldTime.split(":")[0])
-				.set("minute", fieldTime.split(":")[1]),
-			time: fieldTime,
-			city: fieldCity,
-			color: fieldColor,
+				.set("hour", time.split(":")[0])
+				.set("minute", time.split(":")[1]),
+			time,
+			city,
+			color,
 		};
+		//
+		if (selectedData?.id) {
+			// EDIT ITEM
+			//const edit = find(reminders, ["id", selectedData?.id]);
+			remove(reminders, ["id", selectedData?.id]);
+		}
 		reminders.push(obj);
 		setRemindersData(reminders);
 		//
@@ -120,11 +122,11 @@ export default function Modal({
 	//
 	const handleClear = () => {
 		reset({
-			fieldTitle: "",
-			fieldDate: null,
-			fieldTime: "",
-			fieldCity: "",
-			fieldColor: "",
+			title: "",
+			date: "",
+			time: "",
+			city: "",
+			color: "",
 		});
 		setOpen(false);
 		setSelectedData([]);
@@ -138,7 +140,7 @@ export default function Modal({
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((result) => {
-				console.log("Weather: ", result);
+				// console.log("Weather: ", result);
 				setWeatherData(result);
 			})
 			.catch((e) => {
@@ -156,7 +158,11 @@ export default function Modal({
 				aria-labelledby="dialog-title"
 				aria-describedby="dialog-description"
 			>
-				<DialogTitle id="alert-dialog-title" className="align-title">
+				<DialogTitle
+					id="alert-dialog-title"
+					className="align-title"
+					style={{ backgroundColor: selectedData?.color }}
+				>
 					<Grid container spacing={2}>
 						<Grid item md={10} xs={10}>
 							{!isEmpty(selectedData) &&
@@ -171,7 +177,7 @@ export default function Modal({
 								style={{
 									float: "right",
 									cursor: "pointer",
-									color: "#9F9F9F",
+									// color: "#9F9F9F",
 									marginLeft: "10px",
 								}}
 							>
@@ -189,27 +195,30 @@ export default function Modal({
 									<div className="formTitle">Title</div>
 									<TextField
 										fullWidth
-										id="fieldTitle"
-										name="fieldTitle"
+										id="title"
+										name="title"
 										label=""
 										type="text"
 										inputRef={register}
-										error={errors.fieldTitle}
-										helperText={
-											errors.fieldTitle &&
-											errors.fieldTitle.message
-										}
 									/>
+									<FormHelperText
+										style={{ color: "#ff0000" }}
+									>
+										{errors.title && errors.title.message}
+									</FormHelperText>
 								</Grid>
 
 								<Grid item md={4} xs={12}>
 									<div className="formTitle">
-										Reminder color:
+										Reminder color
 									</div>
 									<Controller
 										as={
-											<Select fullWidth>
-												<MenuItem value={null}>
+											<Select
+												fullWidth
+												error={errors.color}
+											>
+												<MenuItem value={""}>
 													Select Color
 												</MenuItem>
 												{colors.map((item, index) => [
@@ -222,7 +231,7 @@ export default function Modal({
 												])}
 											</Select>
 										}
-										name="fieldColor"
+										name="color"
 										control={control}
 										defaultValue=""
 									/>
@@ -233,49 +242,49 @@ export default function Modal({
 									<TextField
 										fullWidth
 										type="date"
-										id="fieldDate"
-										name="fieldDate"
+										id="date"
+										name="date"
 										label=""
 										inputRef={register}
-										error={errors.fieldDate}
-										helperText={
-											errors.fieldDate &&
-											errors.fieldDate.message
-										}
 									/>
+									<FormHelperText
+										style={{ color: "#ff0000" }}
+									>
+										{errors.date && errors.date.message}
+									</FormHelperText>
 								</Grid>
 								<Grid item md={4} xs={12}>
 									<div className="formTitle">Hour</div>
 									<TextField
 										fullWidth
 										type="time"
-										id="fieldTime"
-										name="fieldTime"
+										id="time"
+										name="time"
 										label=""
 										inputRef={register}
-										error={errors.fieldTime}
-										helperText={
-											errors.fieldTime &&
-											errors.fieldTime.message
-										}
 									/>
+									<FormHelperText
+										style={{ color: "#ff0000" }}
+									>
+										{errors.time && errors.time.message}
+									</FormHelperText>
 								</Grid>
 
 								<Grid item md={8} xs={12}>
 									<div className="formTitle">City</div>
 									<TextField
 										fullWidth
-										id="fieldCity"
-										name="fieldCity"
+										id="city"
+										name="city"
 										label=""
 										type="text"
 										inputRef={register}
-										error={errors.fieldCity}
-										helperText={
-											errors.fieldCity &&
-											errors.fieldCity.message
-										}
 									/>
+									<FormHelperText
+										style={{ color: "#ff0000" }}
+									>
+										{errors.city && errors.city.message}
+									</FormHelperText>
 								</Grid>
 
 								{/* {!isEmpty(weatherData) && (

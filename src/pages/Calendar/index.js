@@ -8,10 +8,11 @@ import { Add, Delete, Visibility } from "@material-ui/icons";
 
 import { Container, Calendar, WeekDays, Days, Box, Reminder } from "./styles";
 
-import ModalReminders from "../../components/ModalReminders";
-import ModalConfirmation from "../../components/ModalConfirmation";
+import ModalReminders from "~/components/ModalReminders";
+import ModalConfirmation from "~/components/ModalConfirmation";
 
 export default function PageCalendar() {
+	const [loading, setLoading] = useState(false);
 	const [remindersData, setRemindersData] = useState([]);
 	const [selectedData, setSelectedData] = useState([]);
 	const [open, setOpen] = useState(false);
@@ -125,15 +126,9 @@ export default function PageCalendar() {
 	};
 	//
 	const handleReminder = (item) => {
-		//console.log("handleReminder: ", item);
 		setSelectedData(item);
+		setOpen(true);
 	};
-	//
-	useEffect(() => {
-		if (!isEmpty(selectedData)) {
-			setOpen(true);
-		}
-	}, [selectedData]);
 	//
 	useEffect(() => {
 		// console.log("calendarDays: ", calendarDays);
@@ -142,6 +137,7 @@ export default function PageCalendar() {
 	const handleDelete = () => {
 		const dif = differenceBy(remindersData, selectedData.reminders, "id");
 		window.localStorage.setItem("jobsityCalendar", JSON.stringify(dif));
+		setOpenDelete(false);
 		GetRemindersDataFromStorage();
 	};
 	//
@@ -243,7 +239,7 @@ export default function PageCalendar() {
 																>
 																	<Reminder
 																		color={
-																			reminder.color
+																			reminder?.color
 																		}
 																		onClick={() =>
 																			handleReminder(
