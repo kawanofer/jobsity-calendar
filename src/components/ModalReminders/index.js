@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { isEmpty } from "lodash";
+import * as uuid from "uuid";
 //
 import {
 	Dialog,
@@ -14,7 +15,6 @@ import {
 	TextField,
 	Select,
 	MenuItem,
-	FormHelperText,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
 
@@ -23,11 +23,11 @@ import * as Styles from "./styles";
 export default function Modal({
 	open,
 	setOpen,
-	eventsData,
-	setEventsData,
+	remindersData,
+	setRemindersData,
 	selectedData,
 	setSelectedData,
-	GetEventsDataFromStorage,
+	GetRemindersDataFromStorage,
 }) {
 	const [colors, setColors] = useState([
 		{ name: "Turquoise", hex: "#1abc9c" },
@@ -84,8 +84,9 @@ export default function Modal({
 			fieldColor,
 		} = data;
 		//
-		let events = eventsData;
+		let reminders = remindersData;
 		const obj = {
+			id: uuid.v4(),
 			title: fieldTitle,
 			date: moment(fieldDate).format("L"),
 			fullDate: moment(fieldDate)
@@ -96,11 +97,14 @@ export default function Modal({
 			city: fieldCity,
 			color: fieldColor,
 		};
-		events.push(obj);
-		setEventsData(events);
+		reminders.push(obj);
+		setRemindersData(reminders);
 		//
-		window.localStorage.setItem("jobsityCalendar", JSON.stringify(events));
-		toast.success("Event saved");
+		window.localStorage.setItem(
+			"jobsityCalendar",
+			JSON.stringify(reminders)
+		);
+		toast.success("Reminder saved");
 		handleClear();
 	};
 	//
@@ -114,8 +118,8 @@ export default function Modal({
 		});
 		setOpen(false);
 		setSelectedData([]);
-		// Reload events
-		GetEventsDataFromStorage();
+		// Reload reminders
+		GetRemindersDataFromStorage();
 	};
 	//
 	return (
@@ -132,9 +136,9 @@ export default function Modal({
 					<Grid container spacing={2}>
 						<Grid item md={10} xs={10}>
 							{!isEmpty(selectedData) &&
-							selectedData?.events?.length === 0
-								? "New Event"
-								: "Edit Event"}
+							selectedData?.reminders?.length === 0
+								? "New Reminder"
+								: "Edit Reminder"}
 						</Grid>
 						<Grid item md={2} xs={2}>
 							<span
@@ -259,8 +263,7 @@ export default function Modal({
 							>
 								<Button
 									onClick={() => setOpen(false)}
-									variant="contained"
-									color="default"
+									variant="outlined"
 								>
 									Cancel
 								</Button>

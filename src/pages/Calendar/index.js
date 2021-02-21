@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { isEmpty, filter, truncate } from "lodash";
+import { differenceBy, isEmpty, filter, truncate } from "lodash";
 import { toast } from "react-toastify";
 
 import { Tooltip } from "@material-ui/core";
-import { Add, Visibility } from "@material-ui/icons";
+import { Add, Delete, Visibility } from "@material-ui/icons";
 
-import { Container, Calendar, WeekDays, Days, Box, Event } from "./styles";
+import { Container, Calendar, WeekDays, Days, Box, Reminder } from "./styles";
 
-import Modal from "../../components/Modal";
+import ModalReminders from "../../components/ModalReminders";
+import ModalConfirmation from "../../components/ModalConfirmation";
 
 export default function PageCalendar() {
-	const [eventsData, setEventsData] = useState([]);
+	const [remindersData, setRemindersData] = useState([]);
 	const [selectedData, setSelectedData] = useState([]);
 	const [open, setOpen] = useState(false);
+	const [openDelete, setOpenDelete] = useState(false);
+
 	const [calendarDays, setCalendarDays] = useState([]);
 	const [today, setToday] = useState(moment().format("L"));
 	const [firstWeekDayOfMonth, setFirstWeekDayOfMonth] = useState(
@@ -25,34 +28,32 @@ export default function PageCalendar() {
 	);
 	//
 	useEffect(() => {
-		GetEventsDataFromStorage();
+		GetRemindersDataFromStorage();
 		// console.log(moment());
-		// console.log("-");
-		// //
+		//
 		// console.log("first Weekday Of Month: ", firstWeekDayOfMonth);
 		// console.log("locale: ", locale);
 		// console.log("end Of Month: ", endOfMonth);
-		// //
+		//
 		// console.log("-----------------------");
 	}, []);
 	//
 	useEffect(() => {
 		GenerateCalendar();
-	}, [eventsData]);
+	}, [remindersData]);
 	//
-	const GetEventsDataFromStorage = () => {
+	const GetRemindersDataFromStorage = () => {
 		const values = JSON.parse(
 			window.localStorage.getItem("jobsityCalendar")
 		);
-		setEventsData(
-			values.sort(
+		setRemindersData(
+			values?.sort(
 				(a, b) => new Date(a.fullDate) - new Date(b.fullDate)
 			) ?? []
 		);
 	};
 	//
 	const GenerateCalendar = () => {
-		console.log("EVENTS DATA: ", eventsData);
 		const days = [];
 		const lastDayofPreviousMonth = moment()
 			.subtract(1, "months")
@@ -69,7 +70,10 @@ export default function PageCalendar() {
 				type: "prev",
 				day: prevMonth.get("date"),
 				date: prevMonth.format("L"),
-				events: filter(eventsData, ["date", prevMonth.format("L")]),
+				reminders: filter(remindersData, [
+					"date",
+					prevMonth.format("L"),
+				]),
 			});
 		}
 		//
@@ -80,7 +84,10 @@ export default function PageCalendar() {
 				type: "current",
 				day: currentMonth.get("date"),
 				date: currentMonth.format("L"),
-				events: filter(eventsData, ["date", currentMonth.format("L")]),
+				reminders: filter(remindersData, [
+					"date",
+					currentMonth.format("L"),
+				]),
 			});
 		}
 		//
@@ -93,7 +100,10 @@ export default function PageCalendar() {
 					type: "next",
 					day: nextMonth.get("date"),
 					date: nextMonth.format("L"),
-					events: filter(eventsData, ["date", nextMonth.format("L")]),
+					reminders: filter(remindersData, [
+						"date",
+						nextMonth.format("L"),
+					]),
 				});
 			}
 		}
@@ -104,15 +114,18 @@ export default function PageCalendar() {
 					type: "next",
 					day: nextMonth.get("date"),
 					date: nextMonth.format("L"),
-					events: filter(eventsData, ["date", nextMonth.format("L")]),
+					reminders: filter(remindersData, [
+						"date",
+						nextMonth.format("L"),
+					]),
 				});
 			}
 		}
 		setCalendarDays(days);
 	};
 	//
-	const handleEvent = (item) => {
-		console.log("handleEvent: ", item);
+	const handleReminder = (item) => {
+		//console.log("handleReminder: ", item);
 		setSelectedData(item);
 	};
 	//
@@ -123,8 +136,19 @@ export default function PageCalendar() {
 	}, [selectedData]);
 	//
 	useEffect(() => {
-		console.log("calendarDays: ", calendarDays);
+		// console.log("calendarDays: ", calendarDays);
 	}, [calendarDays]);
+	//
+	const handleDelete = () => {
+		const dif = differenceBy(remindersData, selectedData.reminders, "id");
+		window.localStorage.setItem("jobsityCalendar", JSON.stringify(dif));
+		GetRemindersDataFromStorage();
+	};
+	//
+	const handleOpenDelete = (item) => {
+		setSelectedData(item);
+		setOpenDelete(true);
+	};
 	//
 	return (
 		<Container>
@@ -156,68 +180,88 @@ export default function PageCalendar() {
 									>
 										<div>
 											<div className="boxHeader">
-												{item.day}
-												{item.events.length > 5 && (
+												<div style={{ flexGrow: "1" }}>
+													{item.day}
+												</div>
+
+												{item.reminders.length > 0 && (
 													<Tooltip
-														title={`See all ${item.events.length} events`}
+														title="Delete all reminders"
+														arrow
+														placement="right"
+													>
+														<Delete
+															className="boxIconButton"
+															fontSize="small"
+															onClick={() =>
+																handleOpenDelete(
+																	item
+																)
+															}
+														/>
+													</Tooltip>
+												)}
+
+												{item.reminders.length > 5 && (
+													<Tooltip
+														title={`See all ${item.reminders.length} reminders`}
 														arrow
 														placement="right"
 													>
 														<Visibility
-															className="boxAddButton"
+															className="boxIconButton"
 															fontSize="small"
 														/>
 													</Tooltip>
 												)}
 												<Tooltip
-													title="Add new event"
+													title="Add new reminder"
 													arrow
 													placement="right"
 												>
 													<Add
-														className="boxAddButton"
+														className="boxIconButton"
 														fontSize="small"
 														onClick={() =>
-															handleEvent(item)
+															handleReminder(item)
 														}
 													/>
 												</Tooltip>
 											</div>
 											<div className="boxBody">
-												{!isEmpty(item.events) &&
-													item.events.map((event) => {
-														return (
-															<Tooltip
-																key={Math.random()}
-																title={
-																	event.title
-																}
-																arrow
-																placement="right"
-															>
-																<Event
-																	color={
-																		event.color
+												{!isEmpty(item.reminders) &&
+													item.reminders.map(
+														(reminder) => {
+															return (
+																<Tooltip
+																	key={Math.random()}
+																	title={
+																		reminder.title
 																	}
-																	onClick={() =>
-																		handleEvent(
-																			event
-																		)
-																	}
+																	arrow
+																	placement="right"
 																>
-																	{event.date}{" "}
-																	-{" "}
-																	{event.time}
-																	{/* {truncate(
-																		event.title,
-																		{
-																			length: 20,
+																	<Reminder
+																		color={
+																			reminder.color
 																		}
-																	)} */}
-																</Event>
-															</Tooltip>
-														);
-													})}
+																		onClick={() =>
+																			handleReminder(
+																				reminder
+																			)
+																		}
+																	>
+																		{truncate(
+																			reminder.title,
+																			{
+																				length: 20,
+																			}
+																		)}
+																	</Reminder>
+																</Tooltip>
+															);
+														}
+													)}
 											</div>
 										</div>
 									</Box>
@@ -226,14 +270,25 @@ export default function PageCalendar() {
 					</Days>
 				</>
 			</Calendar>
-			<Modal
+			<ModalReminders
 				open={open}
 				setOpen={setOpen}
-				eventsData={eventsData}
-				setEventsData={setEventsData}
+				remindersData={remindersData}
+				setRemindersData={setRemindersData}
 				selectedData={selectedData}
 				setSelectedData={setSelectedData}
-				GetEventsDataFromStorage={GetEventsDataFromStorage}
+				GetRemindersDataFromStorage={GetRemindersDataFromStorage}
+			/>
+
+			<ModalConfirmation
+				open={openDelete}
+				subtitle="Are you sure you want to permanently delete these reminders?"
+				title="Delete all reminders"
+				handleCancel={() => setOpenDelete(false)}
+				handleClose={() => setOpenDelete(false)}
+				buttonCancelTitle="No"
+				buttonConfirmTitle="Yes"
+				onConfirm={handleDelete}
 			/>
 		</Container>
 	);

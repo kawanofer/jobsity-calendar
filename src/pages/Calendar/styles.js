@@ -75,14 +75,13 @@ export const Box = styled.div`
 
 	.boxHeader {
 		display: flex;
-		justify-content: space-between;
 	}
 
 	.boxBody {
 		overflow-y: auto;
 	}
 
-	.boxAddButton {
+	.boxIconButton {
 		color: #2c3e50;
 		cursor: pointer;
 
@@ -95,7 +94,7 @@ export const Box = styled.div`
 // #bdc3c7
 // #ecf0f1
 
-export const Event = styled.div`
+export const Reminder = styled.div`
 	display: flex;
 	flex-direction: column;
 
