@@ -1,4 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
+
+import 'react-perfect-scrollbar/dist/css/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default createGlobalStyle`
@@ -23,48 +25,12 @@ export default createGlobalStyle`
     height: 100%;
   }
 
-
   body, input, button {
     font-family: "Avenir Next Pro Regular", sans-serif;
   }
-
 
   a {
     text-decoration: none;
   }
 
-
-  ul {
-    list-style: none;
-  }
-
-
-  button {
-    cursor: pointer;
-  }
-
-	.MuiTableCell-body {
-    font-family: 'Open Sans',sans-serif;
-	}
-
-	.MuiTableCell-head {
-    font-family: 'Open-sans',sans-serif;
-	}
-	.MuiButton-text span {
-    font-family: 'Open-sans',sans-serif;
-	}
-	.MuiToolbar-root.MuiToolbar-regular.MuiTablePagination-toolbar.MuiToolbar-gutters p {
-    font-family: 'Open-sans',sans-serif;
-	}
-	.PopoverPopupState-typography-96 {
-    font-family: 'Open-sans', sans-serif;
-	}
-  #alert-dialog-title {
-    > h2 {
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    }
-  }
 `;

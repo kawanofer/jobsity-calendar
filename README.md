@@ -16,7 +16,7 @@ This project is designed to test your knowledge of front-end web technologies an
 ### Bonus (Optional)
 
 - [ ] Expand the calendar to support more than the current month.
-- [ ] Properly handle overflow when multiple reminders appear on the same date.
+- [x] Properly handle overflow when multiple reminders appear on the same date.
 - [x] Functionality to delete one or ALL the reminders for a specific day
 
 ### Considerations

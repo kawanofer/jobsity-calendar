@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import PerfectScrollbar from "react-perfect-scrollbar";
 //
 export const Container = styled.div`
 	width: 100%;
@@ -6,7 +7,7 @@ export const Container = styled.div`
 	height: 100vh;
 
 	padding: 0 30px;
-	margin: 32px auto;
+	margin: 0px auto;
 
 	display: flex;
 	flex-direction: column;
@@ -55,9 +56,13 @@ export const Days = styled.div`
 	flex-wrap: wrap;
 `;
 
+export const ScrollHeader = styled(PerfectScrollbar)`
+	height: 110px;
+`;
+
 export const Box = styled.div`
 	width: 150px;
-	height: 150px;
+	/* height: 150px; */
 	border: 1px solid #ccc;
 	padding: 8px;
 	/* margin: 1px; */
@@ -75,10 +80,6 @@ export const Box = styled.div`
 
 	.boxHeader {
 		display: flex;
-	}
-
-	.boxBody {
-		overflow-y: auto;
 	}
 
 	.boxIconButton {

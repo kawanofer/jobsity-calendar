@@ -6,13 +6,22 @@ import { toast } from "react-toastify";
 import { Tooltip } from "@material-ui/core";
 import { Add, Delete, Visibility } from "@material-ui/icons";
 
-import { Container, Calendar, WeekDays, Days, Box, Reminder } from "./styles";
+import {
+	ScrollHeader,
+	Container,
+	Calendar,
+	WeekDays,
+	Days,
+	Box,
+	Reminder,
+} from "./styles";
 
+import Loader from "~/components/Loader";
 import ModalReminders from "~/components/ModalReminders";
 import ModalConfirmation from "~/components/ModalConfirmation";
 
 export default function PageCalendar() {
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [remindersData, setRemindersData] = useState([]);
 	const [selectedData, setSelectedData] = useState([]);
 	const [open, setOpen] = useState(false);
@@ -123,6 +132,7 @@ export default function PageCalendar() {
 			}
 		}
 		setCalendarDays(days);
+		setLoading(false);
 	};
 	//
 	const handleReminder = (item) => {
@@ -135,6 +145,7 @@ export default function PageCalendar() {
 	}, [calendarDays]);
 	//
 	const handleDelete = () => {
+		setLoading(true);
 		const dif = differenceBy(remindersData, selectedData.reminders, "id");
 		window.localStorage.setItem("jobsityCalendar", JSON.stringify(dif));
 		setOpenDelete(false);
@@ -148,6 +159,7 @@ export default function PageCalendar() {
 	//
 	return (
 		<Container>
+			<Loader active={loading} />
 			<div className="pageTitle">Jobsity - Calendar</div>
 			<div className="pageSubTitle">Front-end Javascript Challenge</div>
 			<Calendar>
@@ -198,18 +210,6 @@ export default function PageCalendar() {
 													</Tooltip>
 												)}
 
-												{item.reminders.length > 5 && (
-													<Tooltip
-														title={`See all ${item.reminders.length} reminders`}
-														arrow
-														placement="right"
-													>
-														<Visibility
-															className="boxIconButton"
-															fontSize="small"
-														/>
-													</Tooltip>
-												)}
 												<Tooltip
 													title="Add new reminder"
 													arrow
@@ -224,7 +224,8 @@ export default function PageCalendar() {
 													/>
 												</Tooltip>
 											</div>
-											<div className="boxBody">
+											{/* <div> */}
+											<ScrollHeader>
 												{!isEmpty(item.reminders) &&
 													item.reminders.map(
 														(reminder) => {
@@ -258,7 +259,8 @@ export default function PageCalendar() {
 															);
 														}
 													)}
-											</div>
+											</ScrollHeader>
+											{/* </div> */}
 										</div>
 									</Box>
 								);
