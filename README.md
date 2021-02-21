@@ -21,12 +21,10 @@ This project is designed to test your knowledge of front-end web technologies an
 
 ### Considerations
 
-- Redux (or any other state manager) structure of the calendar.
+- [ ] Redux (or any other state manager) structure of the calendar.
 - [x] The project is totally focused on the front-end; please ignore the back-end.
 - [x] Keep your code versioned with Git.
-- [x] Feel free to use small helper libraries for:
--- UI Elements.
--- Date/Time handling.
+- [x] Feel free to use small helper libraries for: (*UI Elements.* *Date/Time handling.*)
 - [x] You must create the calendar component yourself. Do not use calendar libraries like FullCalendar or Bootstrap Calendar.
 - [ ] If you use an external API, make sure to provide working API keys.
 
@@ -48,13 +46,3 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
