@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useContext } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import moment from "moment";
 import * as Yup from "yup";
 import { useForm, Controller } from "react-hook-form";
@@ -29,6 +29,7 @@ export default function Modal({
 	setSelectedData,
 	GetRemindersDataFromStorage,
 }) {
+	const [weatherData, setWeatherData] = useState([]);
 	const [colors, setColors] = useState([
 		{ name: "Turquoise", hex: "#1abc9c" },
 		{ name: "Orange", hex: "#f39c12" },
@@ -65,6 +66,15 @@ export default function Modal({
 		},
 		validationSchema: schema,
 	});
+	const values = useMemo(() => watch({ nest: true }), [watch]);
+	console.log("values: ", values);
+	//
+	useEffect(() => {
+		// if (!isEmpty(values.fieldCity)) {
+		// 	getWeather(values.fieldCity);
+		// }
+		getWeather("Curitiba");
+	}, []);
 	//
 	useEffect(() => {
 		console.log("selectedData: ", selectedData);
@@ -122,6 +132,20 @@ export default function Modal({
 		GetRemindersDataFromStorage();
 	};
 	//
+	const getWeather = (city) => {
+		const apiKey = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
+		const apiUrl = `https://api.openweathermap.org/data/2.5/forecast/daily?q=${city}&cnt=16&appid=${apiKey}`;
+		fetch(apiUrl)
+			.then((response) => response.json())
+			.then((result) => {
+				console.log("Weather: ", result);
+				setWeatherData(result);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	};
+	//
 	return (
 		<>
 			<Dialog
@@ -161,7 +185,7 @@ export default function Modal({
 					<Styles.Container>
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<Grid container spacing={2}>
-								<Grid item xs={12}>
+								<Grid item xs={8}>
 									<div className="formTitle">Title</div>
 									<TextField
 										fullWidth
@@ -178,58 +202,10 @@ export default function Modal({
 									/>
 								</Grid>
 
-								<Grid item md={8} xs={12}>
-									<div className="formTitle">Date:</div>
-									<TextField
-										fullWidth
-										type="date"
-										id="fieldDate"
-										name="fieldDate"
-										label=""
-										inputRef={register}
-										error={errors.fieldDate}
-										helperText={
-											errors.fieldDate &&
-											errors.fieldDate.message
-										}
-									/>
-								</Grid>
 								<Grid item md={4} xs={12}>
-									<div className="formTitle">Hour:</div>
-									<TextField
-										fullWidth
-										type="time"
-										id="fieldTime"
-										name="fieldTime"
-										label=""
-										inputRef={register}
-										error={errors.fieldTime}
-										helperText={
-											errors.fieldTime &&
-											errors.fieldTime.message
-										}
-									/>
-								</Grid>
-
-								<Grid item md={6} xs={12}>
-									<div className="formTitle">City:</div>
-									<TextField
-										fullWidth
-										id="fieldCity"
-										name="fieldCity"
-										label=""
-										type="text"
-										inputRef={register}
-										error={errors.fieldCity}
-										helperText={
-											errors.fieldCity &&
-											errors.fieldCity.message
-										}
-									/>
-								</Grid>
-
-								<Grid item md={6} xs={12}>
-									<div className="formTitle">Color:</div>
+									<div className="formTitle">
+										Reminder color:
+									</div>
 									<Controller
 										as={
 											<Select fullWidth>
@@ -251,6 +227,71 @@ export default function Modal({
 										defaultValue=""
 									/>
 								</Grid>
+
+								<Grid item md={8} xs={12}>
+									<div className="formTitle">Date</div>
+									<TextField
+										fullWidth
+										type="date"
+										id="fieldDate"
+										name="fieldDate"
+										label=""
+										inputRef={register}
+										error={errors.fieldDate}
+										helperText={
+											errors.fieldDate &&
+											errors.fieldDate.message
+										}
+									/>
+								</Grid>
+								<Grid item md={4} xs={12}>
+									<div className="formTitle">Hour</div>
+									<TextField
+										fullWidth
+										type="time"
+										id="fieldTime"
+										name="fieldTime"
+										label=""
+										inputRef={register}
+										error={errors.fieldTime}
+										helperText={
+											errors.fieldTime &&
+											errors.fieldTime.message
+										}
+									/>
+								</Grid>
+
+								<Grid item md={8} xs={12}>
+									<div className="formTitle">City</div>
+									<TextField
+										fullWidth
+										id="fieldCity"
+										name="fieldCity"
+										label=""
+										type="text"
+										inputRef={register}
+										error={errors.fieldCity}
+										helperText={
+											errors.fieldCity &&
+											errors.fieldCity.message
+										}
+									/>
+								</Grid>
+
+								{/* {!isEmpty(weatherData) && (
+									<Grid item md={4} xs={12}>
+										<div className="formTitle">
+											Current weather
+										</div>
+										<TextField
+											fullWidth
+											label=""
+											type="text"
+											disabled
+											value={weatherData?.weather[0].main}
+										/>
+									</Grid>
+								)} */}
 							</Grid>
 
 							<div
