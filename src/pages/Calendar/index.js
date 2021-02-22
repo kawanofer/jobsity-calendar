@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { differenceBy, isEmpty, filter, truncate } from "lodash";
-import { toast } from "react-toastify";
+import { differenceBy, toUpper, isEmpty, filter, truncate } from "lodash";
 
 import { Tooltip } from "@material-ui/core";
-import { Add, Delete, Visibility } from "@material-ui/icons";
+import { Add, Delete } from "@material-ui/icons";
 
 import {
 	ScrollHeader,
 	Container,
 	Calendar,
+	Header,
+	Month,
 	WeekDays,
 	Days,
 	Box,
 	Reminder,
 } from "./styles";
 
-import Loader from "~/components/Loader";
-import ModalReminders from "~/components/ModalReminders";
-import ModalConfirmation from "~/components/ModalConfirmation";
+import ModalReminders from "../../components/ModalReminders";
+import ModalConfirmation from "../../components/ModalConfirmation";
+import Loader from "../../components/Loader";
 
 export default function PageCalendar() {
 	const [loading, setLoading] = useState(true);
@@ -39,7 +40,6 @@ export default function PageCalendar() {
 	//
 	useEffect(() => {
 		GetRemindersDataFromStorage();
-		// console.log(moment());
 		//
 		// console.log("first Weekday Of Month: ", firstWeekDayOfMonth);
 		// console.log("locale: ", locale);
@@ -164,17 +164,19 @@ export default function PageCalendar() {
 			<div className="pageSubTitle">Front-end Javascript Challenge</div>
 			<Calendar>
 				<>
-					<WeekDays>
-						{!isEmpty(locale) &&
-							locale._weekdays.map((item) => {
-								return (
-									<div className="cell" key={item}>
-										{item}
-									</div>
-								);
-							})}
-					</WeekDays>
-
+					<Header>
+						<Month>{toUpper(moment().format("MMMM"))}</Month>
+						<WeekDays>
+							{!isEmpty(locale) &&
+								locale._weekdays.map((item) => {
+									return (
+										<div className="cell" key={item}>
+											{item}
+										</div>
+									);
+								})}
+						</WeekDays>
+					</Header>
 					<Days>
 						{!isEmpty(calendarDays) &&
 							calendarDays.map((item, index) => {

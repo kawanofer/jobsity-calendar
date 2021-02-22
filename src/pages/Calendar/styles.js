@@ -3,8 +3,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 //
 export const Container = styled.div`
 	width: 100%;
-	max-width: 1180px;
-	height: 100vh;
+	max-width: 1100px;
 
 	padding: 0 30px;
 	margin: 0px auto;
@@ -14,23 +13,36 @@ export const Container = styled.div`
 	align-items: center;
 
 	.pageTitle {
-		font-size: 2.8rem;
+		font-size: 2.5rem;
+		margin-top: 15px;
 	}
 
 	.pageSubTitle {
 		font-size: 1.2rem;
-		margin-bottom: 30px;
+		margin-bottom: 15px;
 	}
 `;
 
 export const Calendar = styled.div`
 	display: flex;
 	flex-direction: column;
-
 	padding: 8px;
 
 	font-size: 1.2em;
 	font-weight: bold;
+`;
+
+export const Header = styled.div`
+	display: flex;
+	flex-direction: column;
+`;
+
+export const Month = styled.div`
+	display: flex;
+	justify-content: center;
+	background-color: #2c3e50;
+	color: #fff;
+	padding: 8px;
 `;
 
 export const WeekDays = styled.div`
@@ -40,7 +52,7 @@ export const WeekDays = styled.div`
 	.cell {
 		align-items: center;
 		width: 150px;
-		background-color: #2c3e50;
+		background-color: #34495e;
 		text-transform: capitalize;
 		letter-spacing: 1px;
 		text-align: center;
@@ -99,6 +111,7 @@ export const Reminder = styled.div`
 	width: 100%;
 	height: 25px;
 
+	font-weight: normal;
 	font-size: 12px;
 	border-radius: 3px;
 	margin: 1px 0;

@@ -22,7 +22,7 @@ import Close from "@material-ui/icons/Close";
 import * as Styles from "./styles";
 
 export default function Modal({
-	open,
+	open = false,
 	setOpen,
 	remindersData,
 	setRemindersData,
@@ -66,19 +66,22 @@ export default function Modal({
 		},
 		validationSchema: schema,
 	});
+	const values = useMemo(() => watch({ nest: true }), [watch]);
 	//
 	useEffect(() => {
-		// if (!isEmpty(values.city)) {
-		// 	getWeather(values.city);
-		// }
-		//getWeather("Curitiba");
-	}, []);
+		if (!isEmpty(values.city)) {
+			getWeather(values.city);
+		}
+	}, [values.city]);
 	//
 	useEffect(() => {
 		if (!isEmpty(selectedData) && open) {
 			setTimeout(() => {
 				setValue("title", selectedData?.title ?? "");
-				setValue("date", moment(selectedData.date).format().split("T")[0]);
+				setValue(
+					"date",
+					moment(selectedData.date).format().split("T")[0]
+				);
 				setValue("time", selectedData?.time ?? "");
 				setValue("city", selectedData?.city ?? "");
 				setValue("color", selectedData?.color ?? "");
@@ -129,22 +132,25 @@ export default function Modal({
 			color: "",
 		});
 		setOpen(false);
+		setWeatherData([]);
 		setSelectedData([]);
 		// Reload reminders
 		GetRemindersDataFromStorage();
 	};
-	//
+
 	const getWeather = (city) => {
 		const apiKey = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
 		const apiUrl = `https://api.openweathermap.org/data/2.5/forecast/daily?q=${city}&cnt=16&appid=${apiKey}`;
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((result) => {
-				// console.log("Weather: ", result);
-				setWeatherData(result);
+				if (result.cod === 200) {
+					console.log("Weather: ", result);
+					setWeatherData(result?.list[0].weather[0]);
+				}
 			})
 			.catch((e) => {
-				console.log(e);
+				console.error(e);
 			});
 	};
 	//
@@ -154,7 +160,7 @@ export default function Modal({
 				open={open}
 				fullWidth
 				maxWidth="sm"
-				onClose={() => setOpen(false)}
+				onClose={handleClear}
 				aria-labelledby="dialog-title"
 				aria-describedby="dialog-description"
 			>
@@ -172,7 +178,7 @@ export default function Modal({
 						</Grid>
 						<Grid item md={2} xs={2}>
 							<span
-								onClick={() => setOpen(false)}
+								onClick={handleClear}
 								title="Fechar"
 								style={{
 									float: "right",
@@ -209,9 +215,7 @@ export default function Modal({
 								</Grid>
 
 								<Grid item md={4} xs={12}>
-									<div className="formTitle">
-										Reminder color
-									</div>
+									<div className="formTitle">Color</div>
 									<Controller
 										as={
 											<Select
@@ -286,45 +290,41 @@ export default function Modal({
 										{errors.city && errors.city.message}
 									</FormHelperText>
 								</Grid>
-
-								{/* {!isEmpty(weatherData) && (
-									<Grid item md={4} xs={12}>
-										<div className="formTitle">
-											Current weather
-										</div>
-										<TextField
-											fullWidth
-											label=""
-											type="text"
-											disabled
-											value={weatherData?.weather[0].main}
-										/>
-									</Grid>
-								)} */}
 							</Grid>
 
 							<div
 								style={{
 									display: "flex",
 									alignItems: "center",
-									justifyContent: "flex-end",
-									margin: "16px 0",
+									justifyContent: "space-between",
+									margin: "8px 0",
 								}}
 							>
-								<Button
-									onClick={() => setOpen(false)}
-									variant="outlined"
-								>
-									Cancel
-								</Button>
-								<Button
-									style={{ marginLeft: "8px" }}
-									variant="contained"
-									color="primary"
-									type="submit"
-								>
-									Save
-								</Button>
+								<div>
+									{!isEmpty(weatherData) && (
+										<div>
+											<b>Weather forecast: </b>{" "}
+											{weatherData.main}
+										</div>
+									)}
+								</div>
+								{/*  */}
+								<div>
+									<Button
+										onClick={handleClear}
+										variant="outlined"
+									>
+										Cancel
+									</Button>
+									<Button
+										style={{ marginLeft: "8px" }}
+										variant="contained"
+										color="primary"
+										type="submit"
+									>
+										Save
+									</Button>
+								</div>
 							</div>
 						</form>
 					</Styles.Container>

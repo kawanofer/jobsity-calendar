@@ -30,6 +30,11 @@ This project is designed to test your knowledge of front-end web technologies an
 
 ------------
 
+### DEV - OBSERVATIONS
+- Weather forecast api ([openweathermap](https://openweathermap.org/)) didn't returned the days correctly, the prop [dt] was suposed to be the date but is not, so I took the first element of the city selected and displayed in the modal.
+- Weather forecast api_key I'll send by email to Diana.
+------------
+
 ## Available Scripts
 
 In the project directory, you can run:
