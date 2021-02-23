@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import App from "./App";
 
-test("renders correctly", () => {
-	render(<App />);
+describe("<App />", () => {
+	test("renders correctly", () => {
+		render(<App />);
+	});
 });

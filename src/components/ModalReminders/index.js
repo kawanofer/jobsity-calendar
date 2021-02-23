@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { useDispatch } from "react-redux";
 import moment from "moment";
 import * as Yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-import { remove, find, isEmpty } from "lodash";
+import { remove, isEmpty } from "lodash";
 import * as uuid from "uuid";
 //
 import {
@@ -21,7 +22,9 @@ import Close from "@material-ui/icons/Close";
 
 import * as Styles from "./styles";
 
-export default function Modal({
+import { storeReminderData } from "../../store/modules/reminder/actions";
+
+function ModalReminder({
 	open = false,
 	setOpen,
 	remindersData,
@@ -30,6 +33,7 @@ export default function Modal({
 	setSelectedData,
 	GetRemindersDataFromStorage,
 }) {
+	const dispatch = useDispatch();
 	const [weatherData, setWeatherData] = useState([]);
 	const [colors, setColors] = useState([
 		{ name: "Turquoise", hex: "#1abc9c" },
@@ -39,6 +43,7 @@ export default function Modal({
 		{ name: "Wet Asphalt", hex: "#34495e" },
 	]);
 	//
+	// FORM SCHEMA VALIDATIONS
 	const schema = Yup.object().shape({
 		title: Yup.string()
 			.max(30, "limit of 30 chars")
@@ -68,12 +73,14 @@ export default function Modal({
 	});
 	const values = useMemo(() => watch({ nest: true }), [watch]);
 	//
+	// WHEN CITY CHANGE, THE WEATHER IS CHECKED.
 	useEffect(() => {
 		if (!isEmpty(values.city)) {
 			getWeather(values.city);
 		}
 	}, [values.city]);
 	//
+	// POPULATE VALUES ON FORM WHEN MODAL IS OPEN
 	useEffect(() => {
 		if (!isEmpty(selectedData) && open) {
 			setTimeout(() => {
@@ -88,8 +95,8 @@ export default function Modal({
 			}, 500);
 		}
 	}, [selectedData, open]);
-	// console.log("errors: ", errors);
 	//
+	// SAVE DATA FROM FORM
 	const onSubmit = (data, e) => {
 		const { title, date, time, city, color } = data;
 		//
@@ -108,21 +115,18 @@ export default function Modal({
 		};
 		//
 		if (selectedData?.id) {
-			// EDIT ITEM
-			//const edit = find(reminders, ["id", selectedData?.id]);
 			remove(reminders, ["id", selectedData?.id]);
 		}
 		reminders.push(obj);
 		setRemindersData(reminders);
 		//
-		window.localStorage.setItem(
-			"jobsityCalendar",
-			JSON.stringify(reminders)
-		);
+		// CALL REDUX TO SAVE VALUES.
+		dispatch(storeReminderData(reminders));
 		toast.success("Reminder saved");
 		handleClear();
 	};
 	//
+	// WHEN MODAL IS CLOSED, ALL FIELDS ARE CLEARED
 	const handleClear = () => {
 		reset({
 			title: "",
@@ -138,14 +142,14 @@ export default function Modal({
 		GetRemindersDataFromStorage();
 	};
 
+	// FUNC TO CALL WEATHER API
 	const getWeather = (city) => {
 		const apiKey = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
 		const apiUrl = `https://api.openweathermap.org/data/2.5/forecast/daily?q=${city}&cnt=16&appid=${apiKey}`;
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((result) => {
-				if (result.cod === 200) {
-					console.log("Weather: ", result);
+				if (result.cod === "200") {
 					setWeatherData(result?.list[0].weather[0]);
 				}
 			})
@@ -198,7 +202,7 @@ export default function Modal({
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<Grid container spacing={2}>
 								<Grid item xs={8}>
-									<div className="formTitle">Title</div>
+									<label className="formTitle">Title</label>
 									<TextField
 										fullWidth
 										id="title"
@@ -206,6 +210,7 @@ export default function Modal({
 										label=""
 										type="text"
 										inputRef={register}
+										data-testid="title"
 									/>
 									<FormHelperText
 										style={{ color: "#ff0000" }}
@@ -215,7 +220,7 @@ export default function Modal({
 								</Grid>
 
 								<Grid item md={4} xs={12}>
-									<div className="formTitle">Color</div>
+									<label className="formTitle">Color</label>
 									<Controller
 										as={
 											<Select
@@ -242,7 +247,7 @@ export default function Modal({
 								</Grid>
 
 								<Grid item md={8} xs={12}>
-									<div className="formTitle">Date</div>
+									<label className="formTitle">Date</label>
 									<TextField
 										fullWidth
 										type="date"
@@ -258,7 +263,7 @@ export default function Modal({
 									</FormHelperText>
 								</Grid>
 								<Grid item md={4} xs={12}>
-									<div className="formTitle">Hour</div>
+									<label className="formTitle">Hour</label>
 									<TextField
 										fullWidth
 										type="time"
@@ -275,7 +280,7 @@ export default function Modal({
 								</Grid>
 
 								<Grid item md={8} xs={12}>
-									<div className="formTitle">City</div>
+									<label className="formTitle">City</label>
 									<TextField
 										fullWidth
 										id="city"
@@ -321,6 +326,7 @@ export default function Modal({
 										variant="contained"
 										color="primary"
 										type="submit"
+										data-testid="save"
 									>
 										Save
 									</Button>
@@ -333,3 +339,4 @@ export default function Modal({
 		</>
 	);
 }
+export default ModalReminder;

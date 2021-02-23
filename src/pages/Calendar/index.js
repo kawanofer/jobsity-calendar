@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import { differenceBy, toUpper, isEmpty, filter, truncate } from "lodash";
+import {
+	differenceBy,
+	toUpper,
+	isEmpty,
+	filter,
+	truncate,
+	clone,
+} from "lodash";
 
 import { Tooltip } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
@@ -21,7 +29,11 @@ import ModalReminders from "../../components/ModalReminders";
 import ModalConfirmation from "../../components/ModalConfirmation";
 import Loader from "../../components/Loader";
 
+import { requestReminderData, storeReminderData } from "../../store/modules/reminder/actions";
+
 export default function PageCalendar() {
+	const dispatch = useDispatch();
+	//
 	const [loading, setLoading] = useState(true);
 	const [remindersData, setRemindersData] = useState([]);
 	const [selectedData, setSelectedData] = useState([]);
@@ -38,31 +50,36 @@ export default function PageCalendar() {
 		moment().clone().endOf("month").format("DD")
 	);
 	//
+	const remindersDataRedux = useSelector(
+		(state) => state.reminder.remindersData
+	);
+	//
+	useEffect(() => {
+		if (!isEmpty(remindersDataRedux)) {
+			setRemindersData(
+				clone(remindersDataRedux)?.sort(
+					(a, b) => new Date(a.fullDate) - new Date(b.fullDate)
+				)
+			);
+		}
+	}, [remindersDataRedux]);
+	//
+	// WHEN INITIALIZE, CALL FUNC TO GET REMINDERS FROM "backend" localStorage.
 	useEffect(() => {
 		GetRemindersDataFromStorage();
-		//
-		// console.log("first Weekday Of Month: ", firstWeekDayOfMonth);
-		// console.log("locale: ", locale);
-		// console.log("end Of Month: ", endOfMonth);
-		//
-		// console.log("-----------------------");
 	}, []);
 	//
+	// GENERATE DAYS OF CALENDAR WHEN REMINDERS CHANGE.
 	useEffect(() => {
 		GenerateCalendar();
 	}, [remindersData]);
 	//
+	// GET REMINDERS FROM "backend"
 	const GetRemindersDataFromStorage = () => {
-		const values = JSON.parse(
-			window.localStorage.getItem("jobsityCalendar")
-		);
-		setRemindersData(
-			values?.sort(
-				(a, b) => new Date(a.fullDate) - new Date(b.fullDate)
-			) ?? []
-		);
+		dispatch(requestReminderData());
 	};
 	//
+	// GENERATE CALENDAR 'INSERTING' REMINDERS IN EVERY DAY.
 	const GenerateCalendar = () => {
 		const days = [];
 		const lastDayofPreviousMonth = moment()
@@ -117,6 +134,8 @@ export default function PageCalendar() {
 				});
 			}
 		}
+		//
+		// INCREMENT REST OF CALENDAR
 		if (daysLength > 28 && daysLength < 35) {
 			for (let a = 1; a <= 35 - daysLength; a++) {
 				const nextMonth = moment().add(1, "months").set("date", a);
@@ -135,23 +154,23 @@ export default function PageCalendar() {
 		setLoading(false);
 	};
 	//
+	// OPEN MODAL TO ADD OR EDIT REMINDER
 	const handleReminder = (item) => {
 		setSelectedData(item);
 		setOpen(true);
 	};
 	//
-	useEffect(() => {
-		// console.log("calendarDays: ", calendarDays);
-	}, [calendarDays]);
-	//
+	// 'DELETE' REMINDER FROM 'backend', AFTER MODAL CONFIRMATION
 	const handleDelete = () => {
 		setLoading(true);
 		const dif = differenceBy(remindersData, selectedData.reminders, "id");
-		window.localStorage.setItem("jobsityCalendar", JSON.stringify(dif));
+		dispatch(storeReminderData(dif));
+		//window.localStorage.setItem("jobsityCalendar", JSON.stringify(dif));
 		setOpenDelete(false);
 		GetRemindersDataFromStorage();
 	};
 	//
+	// OPEN MODAL TO CONFIRM WHEN DELETE ALL REMINDERS FROM THAT DAY
 	const handleOpenDelete = (item) => {
 		setSelectedData(item);
 		setOpenDelete(true);
@@ -226,7 +245,6 @@ export default function PageCalendar() {
 													/>
 												</Tooltip>
 											</div>
-											{/* <div> */}
 											<ScrollHeader>
 												{!isEmpty(item.reminders) &&
 													item.reminders.map(
@@ -262,7 +280,6 @@ export default function PageCalendar() {
 														}
 													)}
 											</ScrollHeader>
-											{/* </div> */}
 										</div>
 									</Box>
 								);
@@ -270,6 +287,9 @@ export default function PageCalendar() {
 					</Days>
 				</>
 			</Calendar>
+			{/*
+				Modal to create/edit a reminder
+			*/}
 			<ModalReminders
 				open={open}
 				setOpen={setOpen}
@@ -279,7 +299,9 @@ export default function PageCalendar() {
 				setSelectedData={setSelectedData}
 				GetRemindersDataFromStorage={GetRemindersDataFromStorage}
 			/>
-
+			{/*
+				Modal to confirm if the user want to delete all reminders from that day
+			*/}
 			<ModalConfirmation
 				open={openDelete}
 				subtitle="Are you sure you want to permanently delete these reminders?"

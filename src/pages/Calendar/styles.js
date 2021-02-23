@@ -40,9 +40,10 @@ export const Header = styled.div`
 export const Month = styled.div`
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	background-color: #2c3e50;
-	color: #fff;
 	padding: 8px;
+	color: #fff;
 `;
 
 export const WeekDays = styled.div`
@@ -82,11 +83,6 @@ export const Box = styled.div`
 	color: ${({ type }) => (type === "current" ? "#2c3e50" : "#ccc")};
 
 	background-color: ${({ today, date, index }) => {
-		// console.log(index);
-		// if(index === 0 || ((index - 7) === 0))
-		// {
-		// 	console.log(index);
-		// }
 		return today === date ? "rgba(52, 152, 219, 0.7)" : "#fff";
 	}};
 
