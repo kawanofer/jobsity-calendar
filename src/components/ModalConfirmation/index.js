@@ -11,8 +11,6 @@ import {
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
 
-// import { Container } from './styles';
-
 export default function ModalConfirmation({
 	open,
 	handleCancel,
