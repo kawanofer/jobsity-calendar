@@ -10,7 +10,7 @@ import {
 
 export function sendReminder(data) {
 	try {
-		debugger;
+		
 		window.localStorage.setItem(
 			"jobsityCalendar",
 			JSON.stringify(data.payload)

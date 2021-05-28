@@ -16,7 +16,7 @@ export function receiveReminderData(data) {
 }
 
 export function storeReminderData(params) {
-	debugger;
+	
 	return {
 		type: STORE_REMINDER,
 		payload: params,
