@@ -39,13 +39,13 @@ export default function ModalConfirmation({
 					<Grid item md={2} xs={2}>
 						<span
 							onClick={handleClose}
-							title="Fechar"
 							style={{
 								color: "#9F9F9F",
 								cursor: "pointer",
 								float: "right",
 								marginLeft: "10px",
 							}}
+							title="Fechar"
 						>
 							<Close fontSize="small" />
 						</span>
