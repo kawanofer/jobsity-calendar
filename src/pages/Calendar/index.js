@@ -29,7 +29,10 @@ import ModalReminders from "../../components/ModalReminders";
 import ModalConfirmation from "../../components/ModalConfirmation";
 import Loader from "../../components/Loader";
 
-import { requestReminderData, storeReminderData } from "../../store/modules/reminder/actions";
+import {
+	requestReminderData,
+	storeReminderData,
+} from "../../store/modules/reminder/actions";
 
 export default function PageCalendar() {
 	const dispatch = useDispatch();
@@ -41,14 +44,12 @@ export default function PageCalendar() {
 	const [openDelete, setOpenDelete] = useState(false);
 
 	const [calendarDays, setCalendarDays] = useState([]);
-	const [today, setToday] = useState(moment().format("L"));
-	const [firstWeekDayOfMonth, setFirstWeekDayOfMonth] = useState(
+	const [today] = useState(moment().format("L"));
+	const [firstWeekDayOfMonth] = useState(
 		moment(moment().clone().startOf("month").format("L")).day()
 	);
-	const [locale, setLocale] = useState(moment()._locale);
-	const [endOfMonth, setEndOfMonth] = useState(
-		moment().clone().endOf("month").format("DD")
-	);
+	const [locale] = useState(moment()._locale);
+	const [endOfMonth] = useState(moment().clone().endOf("month").format("DD"));
 	//
 	const remindersDataRedux = useSelector(
 		(state) => state.reminder.remindersData

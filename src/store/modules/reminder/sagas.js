@@ -1,4 +1,4 @@
-import { takeLatest, call, put, all } from "redux-saga/effects";
+import { takeLatest, put, all } from "redux-saga/effects";
 import { toast } from "react-toastify";
 
 import {
@@ -10,7 +10,7 @@ import {
 
 export function sendReminder(data) {
 	try {
-		
+
 		window.localStorage.setItem(
 			"jobsityCalendar",
 			JSON.stringify(data.payload)

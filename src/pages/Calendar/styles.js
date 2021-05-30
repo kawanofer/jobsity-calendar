@@ -82,7 +82,7 @@ export const Box = styled.div`
 
 	color: ${({ type }) => (type === "current" ? "#2c3e50" : "#ccc")};
 
-	background-color: ${({ today, date, index }) => {
+	background-color: ${({ today, date }) => {
 		return today === date ? "rgba(52, 152, 219, 0.7)" : "#fff";
 	}};
 

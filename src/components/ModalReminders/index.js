@@ -35,7 +35,7 @@ function ModalReminder({
 }) {
 	const dispatch = useDispatch();
 	const [weatherData, setWeatherData] = useState([]);
-	const [colors, setColors] = useState([
+	const [colors] = useState([
 		{ name: "Turquoise", hex: "#1abc9c" },
 		{ name: "Orange", hex: "#f39c12" },
 		{ name: "Amethyst", hex: "#9b59b6" },
@@ -53,24 +53,17 @@ function ModalReminder({
 		city: Yup.string().required("is required"),
 		color: Yup.string(),
 	});
-	const {
-		register,
-		control,
-		handleSubmit,
-		watch,
-		errors,
-		setValue,
-		reset,
-	} = useForm({
-		defaultValues: {
-			title: "",
-			date: "",
-			time: "",
-			city: "",
-			color: "",
-		},
-		validationSchema: schema,
-	});
+	const { register, control, handleSubmit, watch, errors, setValue, reset } =
+		useForm({
+			defaultValues: {
+				title: "",
+				date: "",
+				time: "",
+				city: "",
+				color: "",
+			},
+			validationSchema: schema,
+		});
 	const values = useMemo(() => watch({ nest: true }), [watch]);
 	//
 	// WHEN CITY CHANGE, THE WEATHER IS CHECKED.
@@ -97,7 +90,7 @@ function ModalReminder({
 	}, [selectedData, open]);
 	//
 	// SAVE DATA FROM FORM
-	const onSubmit = (data, e) => {
+	const onSubmit = (data) => {
 		const { title, date, time, city, color } = data;
 		//
 		let reminders = remindersData;
