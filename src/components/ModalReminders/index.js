@@ -152,184 +152,171 @@ function ModalReminder({
 	};
 	//
 	return (
-		<>
-			<Dialog
-				open={open}
-				fullWidth
-				maxWidth="sm"
-				onClose={handleClear}
-				aria-labelledby="dialog-title"
-				aria-describedby="dialog-description"
+		<Dialog
+			open={open}
+			fullWidth
+			maxWidth="sm"
+			onClose={handleClear}
+			aria-labelledby="dialog-title"
+			aria-describedby="dialog-description"
+		>
+			<DialogTitle
+				id="alert-dialog-title"
+				className="align-title"
+				style={{ backgroundColor: selectedData?.color }}
 			>
-				<DialogTitle
-					id="alert-dialog-title"
-					className="align-title"
-					style={{ backgroundColor: selectedData?.color }}
-				>
-					<Grid container spacing={2}>
-						<Grid item md={10} xs={10}>
-							{!isEmpty(selectedData) &&
-							selectedData?.reminders?.length === 0
-								? "New Reminder"
-								: "Edit Reminder"}
-						</Grid>
-						<Grid item md={2} xs={2}>
-							<span
-								onClick={handleClear}
-								title="Fechar"
-								style={{
-									float: "right",
-									cursor: "pointer",
-									// color: "#9F9F9F",
-									marginLeft: "10px",
-								}}
-							>
-								<Close fontSize="small" />
-							</span>
-						</Grid>
+				<Grid container spacing={2}>
+					<Grid item md={10} xs={10}>
+						{!isEmpty(selectedData) &&
+						selectedData?.reminders?.length === 0
+							? "New Reminder"
+							: "Edit Reminder"}
 					</Grid>
-				</DialogTitle>
+					<Grid item md={2} xs={2}>
+						<span
+							onClick={handleClear}
+							title="Fechar"
+							style={{
+								float: "right",
+								cursor: "pointer",
+								// color: "#9F9F9F",
+								marginLeft: "10px",
+							}}
+						>
+							<Close fontSize="small" />
+						</span>
+					</Grid>
+				</Grid>
+			</DialogTitle>
 
-				<DialogContent dividers>
-					<Styles.Container>
-						<form onSubmit={handleSubmit(onSubmit)}>
-							<Grid container spacing={2}>
-								<Grid item xs={8}>
-									<label className="formTitle">Title</label>
-									<TextField
-										fullWidth
-										id="title"
-										name="title"
-										label=""
-										type="text"
-										inputRef={register}
-										data-testid="title"
-									/>
-									<FormHelperText
-										style={{ color: "#ff0000" }}
-									>
-										{errors.title && errors.title.message}
-									</FormHelperText>
-								</Grid>
-
-								<Grid item md={4} xs={12}>
-									<label className="formTitle">Color</label>
-									<Controller
-										as={
-											<Select
-												fullWidth
-												error={errors.color}
-											>
-												<MenuItem value={""}>
-													Select Color
-												</MenuItem>
-												{colors.map((item, index) => [
-													<MenuItem
-														key={index}
-														value={item.hex}
-													>
-														{item.name}
-													</MenuItem>,
-												])}
-											</Select>
-										}
-										name="color"
-										control={control}
-										defaultValue=""
-									/>
-								</Grid>
-
-								<Grid item md={8} xs={12}>
-									<label className="formTitle">Date</label>
-									<TextField
-										fullWidth
-										type="date"
-										id="date"
-										name="date"
-										label=""
-										inputRef={register}
-									/>
-									<FormHelperText
-										style={{ color: "#ff0000" }}
-									>
-										{errors.date && errors.date.message}
-									</FormHelperText>
-								</Grid>
-								<Grid item md={4} xs={12}>
-									<label className="formTitle">Hour</label>
-									<TextField
-										fullWidth
-										type="time"
-										id="time"
-										name="time"
-										label=""
-										inputRef={register}
-									/>
-									<FormHelperText
-										style={{ color: "#ff0000" }}
-									>
-										{errors.time && errors.time.message}
-									</FormHelperText>
-								</Grid>
-
-								<Grid item md={8} xs={12}>
-									<label className="formTitle">City</label>
-									<TextField
-										fullWidth
-										id="city"
-										name="city"
-										label=""
-										type="text"
-										inputRef={register}
-									/>
-									<FormHelperText
-										style={{ color: "#ff0000" }}
-									>
-										{errors.city && errors.city.message}
-									</FormHelperText>
-								</Grid>
+			<DialogContent dividers>
+				<Styles.Container>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<Grid container spacing={2}>
+							<Grid item xs={8}>
+								<label className="formTitle">Title</label>
+								<TextField
+									fullWidth
+									id="title"
+									name="title"
+									label=""
+									type="text"
+									inputRef={register}
+									data-testid="title"
+								/>
+								<FormHelperText style={{ color: "#ff0000" }}>
+									{errors.title && errors.title.message}
+								</FormHelperText>
 							</Grid>
 
-							<div
-								style={{
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "space-between",
-									margin: "8px 0",
-								}}
-							>
-								<div>
-									{!isEmpty(weatherData) && (
-										<div>
-											<b>Weather forecast: </b>{" "}
-											{weatherData.main}
-										</div>
-									)}
-								</div>
-								{/*  */}
-								<div>
-									<Button
-										onClick={handleClear}
-										variant="outlined"
-									>
-										Cancel
-									</Button>
-									<Button
-										style={{ marginLeft: "8px" }}
-										variant="contained"
-										color="primary"
-										type="submit"
-										data-testid="save"
-									>
-										Save
-									</Button>
-								</div>
+							<Grid item md={4} xs={12}>
+								<label className="formTitle">Color</label>
+								<Controller
+									as={
+										<Select fullWidth error={errors.color}>
+											<MenuItem value={""}>
+												Select Color
+											</MenuItem>
+											{colors.map((item, index) => [
+												<MenuItem
+													key={index}
+													value={item.hex}
+												>
+													{item.name}
+												</MenuItem>,
+											])}
+										</Select>
+									}
+									name="color"
+									control={control}
+									defaultValue=""
+								/>
+							</Grid>
+
+							<Grid item md={8} xs={12}>
+								<label className="formTitle">Date</label>
+								<TextField
+									fullWidth
+									type="date"
+									id="date"
+									name="date"
+									label=""
+									inputRef={register}
+								/>
+								<FormHelperText style={{ color: "#ff0000" }}>
+									{errors.date && errors.date.message}
+								</FormHelperText>
+							</Grid>
+							<Grid item md={4} xs={12}>
+								<label className="formTitle">Hour</label>
+								<TextField
+									fullWidth
+									type="time"
+									id="time"
+									name="time"
+									label=""
+									inputRef={register}
+								/>
+								<FormHelperText style={{ color: "#ff0000" }}>
+									{errors.time && errors.time.message}
+								</FormHelperText>
+							</Grid>
+
+							<Grid item md={8} xs={12}>
+								<label className="formTitle">City</label>
+								<TextField
+									fullWidth
+									id="city"
+									name="city"
+									label=""
+									type="text"
+									inputRef={register}
+								/>
+								<FormHelperText style={{ color: "#ff0000" }}>
+									{errors.city && errors.city.message}
+								</FormHelperText>
+							</Grid>
+						</Grid>
+
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-between",
+								margin: "8px 0",
+							}}
+						>
+							<div>
+								{!isEmpty(weatherData) && (
+									<div>
+										<b>Weather forecast: </b>{" "}
+										{weatherData.main}
+									</div>
+								)}
 							</div>
-						</form>
-					</Styles.Container>
-				</DialogContent>
-			</Dialog>
-		</>
+							{/*  */}
+							<div>
+								<Button
+									onClick={handleClear}
+									variant="outlined"
+								>
+									Cancel
+								</Button>
+								<Button
+									style={{ marginLeft: "8px" }}
+									variant="contained"
+									color="primary"
+									type="submit"
+									data-testid="save"
+								>
+									Save
+								</Button>
+							</div>
+						</div>
+					</form>
+				</Styles.Container>
+			</DialogContent>
+		</Dialog>
 	);
 }
 export default ModalReminder;
