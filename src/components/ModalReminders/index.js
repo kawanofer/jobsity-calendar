@@ -217,9 +217,9 @@ function ModalReminder({
 											<MenuItem value={""}>
 												Select Color
 											</MenuItem>
-											{colors.map((item, index) => [
+											{colors.map((item) => [
 												<MenuItem
-													key={index}
+													key={item.name}
 													value={item.hex}
 												>
 													{item.name}
