@@ -161,8 +161,8 @@ function ModalReminder({
 			open={open}
 		>
 			<DialogTitle
-				id="alert-dialog-title"
 				className="align-title"
+				id="alert-dialog-title"
 				style={{ backgroundColor: selectedData?.color }}
 			>
 				<Grid container spacing={2}>
@@ -175,13 +175,13 @@ function ModalReminder({
 					<Grid item md={2} xs={2}>
 						<span
 							onClick={handleClear}
-							title="Fechar"
 							style={{
 								float: "right",
 								cursor: "pointer",
 								// color: "#9F9F9F",
 								marginLeft: "10px",
 							}}
+							title="Fechar"
 						>
 							<Close fontSize="small" />
 						</span>
@@ -213,7 +213,7 @@ function ModalReminder({
 								<label className="formTitle">Color</label>
 								<Controller
 									as={
-										<Select fullWidth error={errors.color}>
+										<Select error={errors.color} fullWidth>
 											<MenuItem value={""}>
 												Select Color
 											</MenuItem>
@@ -227,9 +227,9 @@ function ModalReminder({
 											])}
 										</Select>
 									}
-									name="color"
 									control={control}
 									defaultValue=""
+									name="color"
 								/>
 							</Grid>
 

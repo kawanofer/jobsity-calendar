@@ -31,7 +31,7 @@ export default function ModalConfirmation({
 			open={open}
 			size={size}
 		>
-			<DialogTitle id="alert-dialog-title" className="align-title">
+			<DialogTitle className="align-title" id="alert-dialog-title">
 				<Grid container spacing={2}>
 					<Grid item md={10} xs={10}>
 						{title}
@@ -41,9 +41,9 @@ export default function ModalConfirmation({
 							onClick={handleClose}
 							title="Fechar"
 							style={{
-								float: "right",
-								cursor: "pointer",
 								color: "#9F9F9F",
+								cursor: "pointer",
+								float: "right",
 								marginLeft: "10px",
 							}}
 						>
@@ -58,7 +58,7 @@ export default function ModalConfirmation({
 			</DialogContent>
 
 			<DialogActions>
-				<Button variant="outlined" onClick={handleCancel}>
+				<Button onClick={handleCancel} variant="outlined">
 					{buttonCancelTitle}
 				</Button>
 				<Button
