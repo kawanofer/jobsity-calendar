@@ -1,35 +1,35 @@
 import React from "react";
 
 import {
+	Button,
 	Dialog,
-	DialogTitle,
+	DialogActions,
 	DialogContent,
 	DialogContentText,
-	DialogActions,
+	DialogTitle,
 	Grid,
-	Button,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
 
 export default function ModalConfirmation({
-	open,
-	handleCancel,
-	handleClose,
-	size = "700px",
-	title = "Modal title",
-	subtitle = "Modal subtitle",
 	buttonCancelTitle = "Cancel",
 	buttonConfirmTitle = "OK",
+	handleCancel,
+	handleClose,
 	onConfirm,
+	open,
+	size = "700px",
+	subtitle = "Modal subtitle",
+	title = "Modal title",
 }) {
 	return (
 		<Dialog
-			open={open}
-			fullWidth
-			size={size}
-			onClose={handleClose}
-			aria-labelledby="modal-confirmation-title"
 			aria-describedby="modal-confirmation-description"
+			aria-labelledby="modal-confirmation-title"
+			fullWidth
+			onClose={handleClose}
+			open={open}
+			size={size}
 		>
 			<DialogTitle id="alert-dialog-title" className="align-title">
 				<Grid container spacing={2}>
@@ -62,10 +62,10 @@ export default function ModalConfirmation({
 					{buttonCancelTitle}
 				</Button>
 				<Button
-					variant="contained"
 					color="primary"
-					style={{ minWidth: 150 }}
 					onClick={onConfirm}
+					style={{ minWidth: 150 }}
+					variant="contained"
 				>
 					{buttonConfirmTitle}
 				</Button>

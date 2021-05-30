@@ -15,7 +15,10 @@ function App() {
 		<Provider store={store}>
 			<Router history={history}>
 				<Switch>
-					<Route path="/" component={Calendar} />
+					<Route
+					component={Calendar}
+					path="/"
+					/>
 				</Switch>
 			</Router>
 			<GlobalStyle />

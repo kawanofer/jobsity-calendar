@@ -8,15 +8,15 @@ import { remove, isEmpty } from "lodash";
 import * as uuid from "uuid";
 //
 import {
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	Grid,
 	Button,
-	TextField,
-	Select,
-	MenuItem,
+	Dialog,
+	DialogContent,
+	DialogTitle,
 	FormHelperText,
+	Grid,
+	MenuItem,
+	Select,
+	TextField,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
 
@@ -25,13 +25,13 @@ import * as Styles from "./styles";
 import { storeReminderData } from "../../store/modules/reminder/actions";
 
 function ModalReminder({
-	open = false,
-	setOpen,
-	remindersData,
-	setRemindersData,
-	selectedData,
-	setSelectedData,
 	GetRemindersDataFromStorage,
+	open = false,
+	remindersData,
+	selectedData,
+	setOpen,
+	setRemindersData,
+	setSelectedData,
 }) {
 	const dispatch = useDispatch();
 	const [weatherData, setWeatherData] = useState([]);
@@ -153,12 +153,12 @@ function ModalReminder({
 	//
 	return (
 		<Dialog
-			open={open}
+			aria-describedby="dialog-description"
+			aria-labelledby="dialog-title"
 			fullWidth
 			maxWidth="sm"
 			onClose={handleClear}
-			aria-labelledby="dialog-title"
-			aria-describedby="dialog-description"
+			open={open}
 		>
 			<DialogTitle
 				id="alert-dialog-title"
@@ -196,13 +196,13 @@ function ModalReminder({
 							<Grid item xs={8}>
 								<label className="formTitle">Title</label>
 								<TextField
+									data-testid="title"
 									fullWidth
 									id="title"
-									name="title"
-									label=""
-									type="text"
 									inputRef={register}
-									data-testid="title"
+									label=""
+									name="title"
+									type="text"
 								/>
 								<FormHelperText style={{ color: "#ff0000" }}>
 									{errors.title && errors.title.message}
@@ -237,11 +237,11 @@ function ModalReminder({
 								<label className="formTitle">Date</label>
 								<TextField
 									fullWidth
-									type="date"
 									id="date"
-									name="date"
-									label=""
 									inputRef={register}
+									label=""
+									name="date"
+									type="date"
 								/>
 								<FormHelperText style={{ color: "#ff0000" }}>
 									{errors.date && errors.date.message}
@@ -251,11 +251,11 @@ function ModalReminder({
 								<label className="formTitle">Hour</label>
 								<TextField
 									fullWidth
-									type="time"
 									id="time"
-									name="time"
-									label=""
 									inputRef={register}
+									label=""
+									name="time"
+									type="time"
 								/>
 								<FormHelperText style={{ color: "#ff0000" }}>
 									{errors.time && errors.time.message}
@@ -267,10 +267,10 @@ function ModalReminder({
 								<TextField
 									fullWidth
 									id="city"
-									name="city"
-									label=""
-									type="text"
 									inputRef={register}
+									label=""
+									name="city"
+									type="text"
 								/>
 								<FormHelperText style={{ color: "#ff0000" }}>
 									{errors.city && errors.city.message}
@@ -280,8 +280,8 @@ function ModalReminder({
 
 						<div
 							style={{
-								display: "flex",
 								alignItems: "center",
+								display: "flex",
 								justifyContent: "space-between",
 								margin: "8px 0",
 							}}
@@ -303,11 +303,11 @@ function ModalReminder({
 									Cancel
 								</Button>
 								<Button
-									style={{ marginLeft: "8px" }}
-									variant="contained"
 									color="primary"
-									type="submit"
 									data-testid="save"
+									style={{ marginLeft: "8px" }}
+									type="submit"
+									variant="contained"
 								>
 									Save
 								</Button>

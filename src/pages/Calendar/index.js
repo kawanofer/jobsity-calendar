@@ -2,27 +2,27 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
-	differenceBy,
-	toUpper,
-	isEmpty,
-	filter,
-	truncate,
 	clone,
+	differenceBy,
+	filter,
+	isEmpty,
+	toUpper,
+	truncate,
 } from "lodash";
 
 import { Tooltip } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
 
 import {
-	ScrollHeader,
-	Container,
+	Box,
 	Calendar,
+	Container,
+	Days,
 	Header,
 	Month,
-	WeekDays,
-	Days,
-	Box,
 	Reminder,
+	ScrollHeader,
+	WeekDays,
 } from "./styles";
 
 import ModalReminders from "../../components/ModalReminders";
@@ -202,11 +202,11 @@ export default function PageCalendar() {
 							calendarDays.map((item, index) => {
 								return (
 									<Box
-										key={item.date}
-										type={item.type}
-										index={index}
-										today={today}
 										date={item.date}
+										index={index}
+										key={item.date}
+										today={today}
+										type={item.type}
 									>
 										<div>
 											<div className="boxHeader">
@@ -216,9 +216,9 @@ export default function PageCalendar() {
 
 												{item.reminders.length > 0 && (
 													<Tooltip
-														title="Delete all reminders"
 														arrow
 														placement="right"
+														title="Delete all reminders"
 													>
 														<Delete
 															className="boxIconButton"
@@ -233,9 +233,9 @@ export default function PageCalendar() {
 												)}
 
 												<Tooltip
-													title="Add new reminder"
 													arrow
 													placement="right"
+													title="Add new reminder"
 												>
 													<Add
 														className="boxIconButton"
@@ -252,12 +252,12 @@ export default function PageCalendar() {
 														(reminder) => {
 															return (
 																<Tooltip
+																	arrow
 																	key={Math.random()}
+																	placement="right"
 																	title={
 																		reminder.title
 																	}
-																	arrow
-																	placement="right"
 																>
 																	<Reminder
 																		color={
@@ -292,26 +292,26 @@ export default function PageCalendar() {
 				Modal to create/edit a reminder
 			*/}
 			<ModalReminders
-				open={open}
-				setOpen={setOpen}
-				remindersData={remindersData}
-				setRemindersData={setRemindersData}
-				selectedData={selectedData}
-				setSelectedData={setSelectedData}
 				GetRemindersDataFromStorage={GetRemindersDataFromStorage}
+				open={open}
+				remindersData={remindersData}
+				selectedData={selectedData}
+				setOpen={setOpen}
+				setRemindersData={setRemindersData}
+				setSelectedData={setSelectedData}
 			/>
 			{/*
 				Modal to confirm if the user want to delete all reminders from that day
 			*/}
 			<ModalConfirmation
+				buttonCancelTitle="No"
+				buttonConfirmTitle="Yes"
+				handleCancel={() => setOpenDelete(false)}
+				handleClose={() => setOpenDelete(false)}
+				onConfirm={handleDelete}
 				open={openDelete}
 				subtitle="Are you sure you want to permanently delete these reminders?"
 				title="Delete all reminders"
-				handleCancel={() => setOpenDelete(false)}
-				handleClose={() => setOpenDelete(false)}
-				buttonCancelTitle="No"
-				buttonConfirmTitle="Yes"
-				onConfirm={handleDelete}
 			/>
 		</Container>
 	);
