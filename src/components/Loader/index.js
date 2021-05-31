@@ -39,6 +39,8 @@ function Loader(props) {
 
 Loader.propTypes = {
 	props: PropTypes.object,
+	classes: PropTypes.object,
+	active: PropTypes.bool,
 };
 
 export default withStyles(styles)(Loader);
