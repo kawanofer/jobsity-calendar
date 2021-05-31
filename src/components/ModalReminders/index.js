@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 import * as Yup from "yup";
@@ -319,4 +320,16 @@ function ModalReminder({
 		</Dialog>
 	);
 }
+
+ModalReminder.propTypes = {
+	GetRemindersDataFromStorage: PropTypes.func,
+	open: PropTypes.bool,
+	remindersData: PropTypes.array,
+	selectedData: PropTypes.object,
+	setOpen: PropTypes.func,
+	setRemindersData: PropTypes.func,
+	setSelectedData: PropTypes.func,
+};
+
+
 export default ModalReminder;
