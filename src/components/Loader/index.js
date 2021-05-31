@@ -1,46 +1,22 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
-// import theme from '~/assets/theme/HBTheme'
 
-const styles = () => ({
-	progress: {
-		textAlign: "center",
-		position: "fixed",
-		left: "50%",
-		top: "50%",
-		overflow: "hidden",
-		zIndex: 9999,
-		color: "#fff",
-	},
-});
+import { Container } from "./styles";
 
 function Loader(props) {
-	const { classes } = props;
 	return (
-		<div
-			style={{
-				backgroundColor: "rgba(0, 0, 0, 0.4)",
-				position: "fixed",
-				left: 0,
-				right: 0,
-				top: 0,
-				bottom: 0,
-				zIndex: 5000,
-				display: props.active ? "block" : "none",
-			}}
-		>
-			<CircularProgress className={classes.progress} size="100px" />
-		</div>
+		<Container active={props.active}>
+			<CircularProgress className="progress" size="100px" />
+		</Container>
 	);
 }
 
 Loader.propTypes = {
-	props: PropTypes.object,
-	classes: PropTypes.object,
 	active: PropTypes.bool,
+	classes: PropTypes.object,
+	props: PropTypes.object,
 };
 
-export default withStyles(styles)(Loader);
+export default Loader;
