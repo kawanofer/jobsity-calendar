@@ -331,5 +331,4 @@ ModalReminder.propTypes = {
 	setSelectedData: PropTypes.func,
 };
 
-
 export default ModalReminder;
