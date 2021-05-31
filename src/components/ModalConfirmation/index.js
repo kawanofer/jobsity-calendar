@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import {
 	Button,
@@ -73,3 +74,16 @@ export default function ModalConfirmation({
 		</Dialog>
 	);
 }
+
+ModalConfirmation.propTypes = {
+	buttonCancelTitle: PropTypes.string,
+	buttonConfirmTitle: PropTypes.string,
+	handleCancel: PropTypes.func,
+	handleClose: PropTypes.func,
+	onConfirm: PropTypes.func,
+	open: PropTypes.bool,
+	size: PropTypes.string,
+	// size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+	subtitle: PropTypes.string,
+	title: PropTypes.string,
+};
