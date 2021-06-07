@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo } from "react";
-import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
-import moment from "moment";
 import * as Yup from "yup";
-import { useForm, Controller } from "react-hook-form";
-import { toast } from "react-toastify";
-import { remove, isEmpty } from "lodash";
 import * as uuid from "uuid";
+import PropTypes from "prop-types";
+import moment from "moment";
+import { isEmpty, remove } from "lodash";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
 //
 import {
 	Button,
@@ -57,11 +57,11 @@ function ModalReminder({
 	const { register, control, handleSubmit, watch, errors, setValue, reset } =
 		useForm({
 			defaultValues: {
-				title: "",
-				date: "",
-				time: "",
 				city: "",
 				color: "",
+				date: "",
+				time: "",
+				title: "",
 			},
 			validationSchema: schema,
 		});
@@ -78,14 +78,14 @@ function ModalReminder({
 	useEffect(() => {
 		if (!isEmpty(selectedData) && open) {
 			setTimeout(() => {
-				setValue("title", selectedData?.title ?? "");
+				setValue("city", selectedData?.city ?? "");
+				setValue("color", selectedData?.color ?? "");
 				setValue(
 					"date",
 					moment(selectedData.date).format().split("T")[0]
 				);
 				setValue("time", selectedData?.time ?? "");
-				setValue("city", selectedData?.city ?? "");
-				setValue("color", selectedData?.color ?? "");
+				setValue("title", selectedData?.title ?? "");
 			}, 500);
 		}
 	}, [selectedData, open]);
@@ -94,7 +94,7 @@ function ModalReminder({
 	const onSubmit = (data) => {
 		const { title, date, time, city, color } = data;
 		//
-		let reminders = remindersData;
+		const reminders = remindersData;
 		const obj = {
 			id: uuid.v4(),
 			title,

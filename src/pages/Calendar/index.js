@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
 	clone,
@@ -9,6 +8,7 @@ import {
 	toUpper,
 	truncate,
 } from "lodash";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Tooltip } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
@@ -25,9 +25,9 @@ import {
 	WeekDays,
 } from "./styles";
 
-import ModalReminders from "../../components/ModalReminders";
-import ModalConfirmation from "../../components/ModalConfirmation";
 import Loader from "../../components/Loader";
+import ModalConfirmation from "../../components/ModalConfirmation";
+import ModalReminders from "../../components/ModalReminders";
 
 import {
 	requestReminderData,
@@ -181,7 +181,9 @@ export default function PageCalendar() {
 		<Container>
 			<Loader active={loading} />
 			<div className="pageTitle">{"Jobsity - Calendar"}</div>
-			<div className="pageSubTitle">{"Front-end Javascript Challenge"}</div>
+			<div className="pageSubTitle">
+				{"Front-end Javascript Challenge"}
+			</div>
 			<Calendar>
 				<>
 					<Header>
