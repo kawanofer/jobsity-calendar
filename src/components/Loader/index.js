@@ -15,8 +15,6 @@ function Loader(props) {
 
 Loader.propTypes = {
 	active: PropTypes.bool,
-	classes: PropTypes.object,
-	props: PropTypes.object,
 };
 
 export default Loader;
