@@ -6,8 +6,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { Container } from "./styles";
 
 function Loader(props) {
+	const { active } = props;
 	return (
-		<Container active={props.active}>
+		<Container active={active}>
 			<CircularProgress className="progress" size="100px" />
 		</Container>
 	);
