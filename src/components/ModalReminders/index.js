@@ -195,7 +195,7 @@ function ModalReminder({
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<Grid container spacing={2}>
 							<Grid item xs={8}>
-								<label className="formTitle">Title</label>
+								<label className="formTitle">{"Title"}</label>
 								<TextField
 									data-testid="title"
 									fullWidth
@@ -211,12 +211,12 @@ function ModalReminder({
 							</Grid>
 
 							<Grid item md={4} xs={12}>
-								<label className="formTitle">Color</label>
+								<label className="formTitle">{"Color"}</label>
 								<Controller
 									as={
 										<Select error={errors.color} fullWidth>
 											<MenuItem value={""}>
-												Select Color
+												{"Select Color"}
 											</MenuItem>
 											{colors.map((item) => [
 												<MenuItem
@@ -235,7 +235,7 @@ function ModalReminder({
 							</Grid>
 
 							<Grid item md={8} xs={12}>
-								<label className="formTitle">Date</label>
+								<label className="formTitle">{"Date"}</label>
 								<TextField
 									fullWidth
 									id="date"
@@ -249,7 +249,7 @@ function ModalReminder({
 								</FormHelperText>
 							</Grid>
 							<Grid item md={4} xs={12}>
-								<label className="formTitle">Hour</label>
+								<label className="formTitle">{"Hour"}</label>
 								<TextField
 									fullWidth
 									id="time"
@@ -264,7 +264,7 @@ function ModalReminder({
 							</Grid>
 
 							<Grid item md={8} xs={12}>
-								<label className="formTitle">City</label>
+								<label className="formTitle">{"City"}</label>
 								<TextField
 									fullWidth
 									id="city"
@@ -290,7 +290,7 @@ function ModalReminder({
 							<div>
 								{!isEmpty(weatherData) && (
 									<div>
-										<b>Weather forecast: </b>{" "}
+										<b>{"Weather forecast:"} </b>{" "}
 										{weatherData.main}
 									</div>
 								)}
@@ -301,7 +301,7 @@ function ModalReminder({
 									onClick={handleClear}
 									variant="outlined"
 								>
-									Cancel
+									{"Cancel"}
 								</Button>
 								<Button
 									color="primary"
@@ -310,7 +310,7 @@ function ModalReminder({
 									type="submit"
 									variant="contained"
 								>
-									Save
+									{"Save"}
 								</Button>
 							</div>
 						</div>

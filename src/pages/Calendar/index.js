@@ -180,8 +180,8 @@ export default function PageCalendar() {
 	return (
 		<Container>
 			<Loader active={loading} />
-			<div className="pageTitle">Jobsity - Calendar</div>
-			<div className="pageSubTitle">Front-end Javascript Challenge</div>
+			<div className="pageTitle">{"Jobsity - Calendar"}</div>
+			<div className="pageSubTitle">{"Front-end Javascript Challenge"}</div>
 			<Calendar>
 				<>
 					<Header>
