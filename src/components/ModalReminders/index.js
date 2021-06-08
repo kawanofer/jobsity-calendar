@@ -35,7 +35,6 @@ function ModalReminder({
 	setSelectedData,
 }) {
 	const dispatch = useDispatch();
-	const [weatherData, setWeatherData] = useState([]);
 	const [colors] = useState([
 		{ name: "Turquoise", hex: "#1abc9c" },
 		{ name: "Orange", hex: "#f39c12" },
@@ -43,11 +42,14 @@ function ModalReminder({
 		{ name: "Alizarin", hex: "#e74c3c" },
 		{ name: "Wet Asphalt", hex: "#34495e" },
 	]);
+	const [maxChar] = useState(30);
+	const [timeoutValue] = useState(500);
+	const [weatherData, setWeatherData] = useState([]);
 	//
 	// FORM SCHEMA VALIDATIONS
 	const schema = Yup.object().shape({
 		title: Yup.string()
-			.max(30, "limit of 30 chars")
+			.max(maxChar, "limit of 30 chars")
 			.required("is required"),
 		date: Yup.date().required().typeError("is required"),
 		time: Yup.string().required("is required"),
@@ -86,7 +88,7 @@ function ModalReminder({
 				);
 				setValue("time", selectedData?.time ?? "");
 				setValue("title", selectedData?.title ?? "");
-			}, 500);
+			}, timeoutValue);
 		}
 	}, [selectedData, open]);
 	//

@@ -45,6 +45,7 @@ export default function PageCalendar() {
 
 	const [calendarDays, setCalendarDays] = useState([]);
 	const [today] = useState(moment().format("L"));
+	const [weekDays] = useState(7);
 	const [firstWeekDayOfMonth] = useState(
 		moment(moment().clone().startOf("month").format("L")).day()
 	);
@@ -119,10 +120,10 @@ export default function PageCalendar() {
 			});
 		}
 		//
-		// INCREMENT REST OF CALENDAR
+		// INCREMENT REST OF CALENDAR - 4TH LINE
 		const daysLength = days.length;
-		if (daysLength > 21 && daysLength < 28) {
-			for (let a = 1; a <= 28 - daysLength; a++) {
+		if (daysLength > weekDays * 3 && daysLength < weekDays * 4) {
+			for (let a = 1; a <= weekDays * 4 - daysLength; a++) {
 				const nextMonth = moment().add(1, "months").set("date", a);
 				days.push({
 					type: "next",
@@ -136,9 +137,9 @@ export default function PageCalendar() {
 			}
 		}
 		//
-		// INCREMENT REST OF CALENDAR
-		if (daysLength > 28 && daysLength < 35) {
-			for (let a = 1; a <= 35 - daysLength; a++) {
+		// INCREMENT REST OF CALENDAR - 5TH LINE
+		if (daysLength > weekDays * 4 && daysLength < weekDays * 5) {
+			for (let a = 1; a <= weekDays * 5 - daysLength; a++) {
 				const nextMonth = moment().add(1, "months").set("date", a);
 				days.push({
 					type: "next",
